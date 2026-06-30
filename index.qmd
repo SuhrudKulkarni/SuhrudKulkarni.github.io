@@ -1,0 +1,9 @@
+---
+title: "Suhrud Kulkarni"
+---
+
+Senior quantitative researcher, working at the intersection of systematic trading and modern deep learning.
+
+This site collects [working notes](writing.qmd) on RL, optimization, numerical methods, and applied techniques. Some posts are cross-field synthesis pieces — connections between trading, hypothesis testing, operations research, personalization, and modern ML.
+
+See the [About](about.qmd) page for background, or [github.com/SuhrudKulkarni](https://github.com/SuhrudKulkarni) for code.

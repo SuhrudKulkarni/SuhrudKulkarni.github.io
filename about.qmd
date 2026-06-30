@@ -1,0 +1,11 @@
+---
+title: "About"
+---
+
+I'm a senior quantitative researcher heading to Susquehanna in early 2027 to help build out systematic fixed income trading. Before that I spent four years at TD Securities Automated Trading (formerly Headlands Tech Global Markets), building credit trading systems end to end — feature engineering, model training, backtesting, portfolio optimization, execution. Earlier I was an applied scientist at Amazon, working on fulfillment optimization and ML for supply chain.
+
+Currently on a noncompete period. I've been using it to go deep on modern deep learning — pretraining mechanics, transformer internals, RL post-training, scaling laws. The [Writing](writing.qmd) page collects working notes from that, along with cross-field synthesis pieces I'd been meaning to write for a while.
+
+Outside of work I was a competitive gymnast through college and still compete recreationally. I run long-distance.
+
+For code and technical work see [github.com/SuhrudKulkarni](https://github.com/SuhrudKulkarni).

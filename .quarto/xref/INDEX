@@ -1,0 +1,32 @@
+{
+  "index.qmd": {
+    "index.html": "03807be4"
+  },
+  "about.qmd": {
+    "about.html": "49c390ac"
+  },
+  "posts/2-fisher-information.md": {
+    "2-fisher-information.html": "c564afe6"
+  },
+  "posts/9-binary-search.md": {
+    "9-binary-search.html": "805bc98a"
+  },
+  "posts/1-variance-reduction.md": {
+    "1-variance-reduction.html": "8b79577f"
+  },
+  "posts/4-goal-programming.md": {
+    "4-goal-programming.html": "816d93ba"
+  },
+  "posts/10-systems-under-load.md": {
+    "10-systems-under-load.html": "f607dbe9"
+  },
+  "posts/7-lambdamart-dpo.md": {
+    "7-lambdamart-dpo.html": "9573d0bc"
+  },
+  "posts/8-clipping.md": {
+    "8-clipping.html": "5203bde9"
+  },
+  "writing.qmd": {
+    "writing.html": "f11a3408"
+  }
+}
