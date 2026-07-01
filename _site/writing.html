@@ -67,35 +67,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -125,16 +96,21 @@ window.Quarto = {
     <a class="nav-link active" href="./writing.html" aria-current="page"> 
 <span class="menu-text">Writing</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About</span></a>
-  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/SuhrudKulkarni"> <i class="bi bi-github" role="img">
 </i> 
 <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/suhrud-kulkarni-3a820488"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://www.strava.com/athletes/25074162"> 
+<span class="menu-text">Strava</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -154,7 +130,6 @@ window.Quarto = {
   <ul>
   <li><a href="#posts" id="toc-posts" class="nav-link active" data-scroll-target="#posts">Posts</a></li>
   <li><a href="#code" id="toc-code" class="nav-link" data-scroll-target="#code">Code</a></li>
-  <li><a href="#in-flight" id="toc-in-flight" class="nav-link" data-scroll-target="#in-flight">In flight</a></li>
   </ul>
 </nav>
     </div>
@@ -180,33 +155,25 @@ window.Quarto = {
 </header>
 
 
-<p>Working notes on RL, optimization, numerical methods, and applied techniques. Some posts are cross-field synthesis — the same trick appearing in trading, hypothesis testing, OR, and modern ML.</p>
+<p>Notes on RL, optimization, numerical methods, and applied techniques.</p>
 <section id="posts" class="level2">
 <h2 class="anchored" data-anchor-id="posts">Posts</h2>
 <ul>
-<li><p><a href="./posts/1-variance-reduction.html">Variance reduction and GAE</a> — The same trick shows up in Monte Carlo (control variates), trading (minimum-variance hedge), quant finance (excess return), and policy-gradient RL (the advantage function). A walk through the unified formula and modern policy gradient methods like GAE and GRPO.</p></li>
-<li><p><a href="./posts/2-fisher-information.html">Fisher Information again and again</a> — The same matrix appears as a preconditioner in natural gradient, a constraint in TRPO, a diagonal approximation in Adam, an ingredient in NES, and a lower bound in Cramér-Rao.</p></li>
-<li><p><a href="./posts/4-goal-programming.html">Goal programming: hyperparameters as economic coefficients</a> — Lagrangian multipliers as shadow prices: prices we measure, dials we tune, constraints we cannot violate, and some questions about RLHF penalty terms.</p></li>
-<li><p><a href="./posts/7-lambdamart-dpo.html">Personalization and RLHF</a> — Parallels between RankNet/LambdaMART and DPO, both built on Bradley-Terry.</p></li>
-<li><p><a href="./posts/8-clipping.html">Robustness and clipping</a> — A guardrail against bad inputs can go on the input itself, with robust estimators like winsorization, MAD, or MCD, or on the function output, with gradient clipping, PPO ratio clipping, or per-trade PnL clipping.</p></li>
-<li><p><a href="./posts/9-binary-search.html">Binary search and bisection</a> — A one-stop C++23 template that solves integer search, bisection root-finding, bond yield-to-maturity, and inverse CDF sampling.</p></li>
-<li><p><a href="./posts/10-systems-under-load.html">Systems under load</a> — Little’s Law, M/M/1 wait times, and Amdahl’s law, applied to software systems and to a trading desk in a sell-off.</p></li>
+<li><p><strong><a href="./posts/1-variance-reduction.html">Variance reduction and GAE</a>.</strong> The same trick shows up in Monte Carlo (control variates), trading (minimum-variance hedge), quant finance (excess return), and policy-gradient RL (the advantage function). A walk through the unified formula and modern policy gradient methods like GAE and GRPO.</p></li>
+<li><p><strong><a href="./posts/2-fisher-information.html">Fisher Information again and again</a>.</strong> The same matrix appears as a preconditioner in natural gradient, a constraint in TRPO, a diagonal approximation in Adam, an ingredient in NES, and a lower bound in Cramér-Rao.</p></li>
+<li><p><strong><a href="./posts/4-goal-programming.html">Goal programming: hyperparameters as economic coefficients</a>.</strong> Lagrangian multipliers as shadow prices, prices we measure, dials we tune, constraints we cannot violate, and some questions about RLHF penalty terms.</p></li>
+<li><p><strong><a href="./posts/7-lambdamart-dpo.html">Personalization and RLHF</a>.</strong> Parallels between RankNet/LambdaMART and DPO, both built on Bradley-Terry.</p></li>
+<li><p><strong><a href="./posts/8-clipping.html">Robustness and clipping</a>.</strong> A guardrail against bad inputs can go on the input itself, with robust estimators like winsorization, MAD, or MCD, or on the function output, with gradient clipping, PPO ratio clipping, or per-trade PnL clipping.</p></li>
+<li><p><strong><a href="./posts/9-binary-search.html">Binary search and bisection</a>.</strong> A one-stop-shop C++23 template that solves integer search, bisection root-finding, bond yield-to-maturity, and inverse CDF sampling.</p></li>
+<li><p><strong><a href="./posts/10-systems-under-load.html">Systems under load</a>.</strong> Little’s Law, M/M/1 wait times, and Amdahl’s law, applied to software systems and to a trading desk in a sell-off.</p></li>
 </ul>
 </section>
 <section id="code" class="level2">
 <h2 class="anchored" data-anchor-id="code">Code</h2>
 <ul>
-<li><a href="https://github.com/SuhrudKulkarni/notes/blob/main/code/handrolled_multihead_attention.py">Hand-rolled multi-head self-attention</a> — Causal MHA with fused QKV, raw <code>nn.Parameter</code> matrices, and einops + einsum.</li>
-<li><a href="https://github.com/SuhrudKulkarni/notes/blob/main/code/handrolled_rope.py">Two implementations of RoPE</a> — Even/odd slicing and a block-diagonal rotation matrix.</li>
-<li><a href="https://github.com/SuhrudKulkarni/notes/blob/main/code/tool_use_objective_gaming.py">Reward hacking: optimizer gaming a misspecified objective</a> — Toy REINFORCE with two tasks and an <code>add()</code> tool. A bonus allows the optimizer to game the objective and use the tool unnecessarily.</li>
-</ul>
-</section>
-<section id="in-flight" class="level2">
-<h2 class="anchored" data-anchor-id="in-flight">In flight</h2>
-<ul>
-<li><p><strong>Kernels in modern attention.</strong> <span class="math inline">\(QK^\top\)</span> is kernel-y, asymmetric, not Mercer-PSD. If I squint, attention looks kernel-shaped. Performer applies random Fourier features to the softmax kernel for sub-quadratic attention; RoPE applies Bochner’s spectral decomposition to the position kernel.</p></li>
-<li><p><strong>Double or nothing: Duality.</strong> Super egg drop, SVMs, DualDICE. Three settings where I see duality. The dual simplifies egg drop, opens computational access in SVMs, and is nicer math but computationally unloved in DICE.</p></li>
-<li><p><strong>From A/B testing to ML eval.</strong> The standard interview question (A/B test, CTR 95% vs 97%, is it significant?) opens onto the Wald–Score–LR trinity, Neyman–Pearson, Wilks’ theorem. ML benchmarks have prompt clusters, within-subjects comparisons, contamination, multi-checkpoint reporting. So what test do we use? Thoughts on cluster-robust SEs, panel methods, multiple-comparison corrections.</p></li>
+<li><p><strong><a href="https://github.com/SuhrudKulkarni/notes/blob/main/code/handrolled_multihead_attention.py">Hand-rolled multi-head self-attention</a>.</strong> Causal MHA with fused QKV, raw <code>nn.Parameter</code> matrices, and einops + einsum.</p></li>
+<li><p><strong><a href="https://github.com/SuhrudKulkarni/notes/blob/main/code/handrolled_rope.py">Two implementations of RoPE</a>.</strong> Even/odd slicing and a block-diagonal rotation matrix.</p></li>
+<li><p><strong><a href="https://github.com/SuhrudKulkarni/notes/blob/main/code/tool_use_objective_gaming.py">Reward hacking: optimizer gaming a misspecified objective</a>.</strong> Toy REINFORCE with two tasks and an <code>add()</code> tool. A bonus allows the optimizer to game the obj and use the tool unnecessarily.</p></li>
 </ul>
 
 

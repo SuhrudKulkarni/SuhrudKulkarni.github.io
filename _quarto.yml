@@ -10,11 +10,13 @@ website:
         text: Home
       - href: writing.qmd
         text: Writing
-      - href: about.qmd
-        text: About
     right:
       - icon: github
         href: https://github.com/SuhrudKulkarni
+      - icon: linkedin
+        href: https://www.linkedin.com/in/suhrud-kulkarni-3a820488
+      - text: Strava
+        href: https://www.strava.com/athletes/25074162
 
 format:
   html:

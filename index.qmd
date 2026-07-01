@@ -2,8 +2,12 @@
 title: "Suhrud Kulkarni"
 ---
 
-Senior quantitative researcher, working at the intersection of systematic trading and modern deep learning.
+![](images/headshot.jpg){width=220 fig-align="left"}
 
-This site collects [working notes](writing.qmd) on RL, optimization, numerical methods, and applied techniques. Some posts are cross-field synthesis pieces — connections between trading, hypothesis testing, operations research, personalization, and modern ML.
+It's pretty fun to find similar ideas across unrelated fields. It's that "wait, I've seen this before" feeling. Many of the pieces here are about it.
 
-See the [About](about.qmd) page for background, or [github.com/SuhrudKulkarni](https://github.com/SuhrudKulkarni) for code.
+Right now I'm on a noncompete, going deep on modern deep learning. Working notes are on the [Writing](writing.qmd) page.
+
+Previously, I spent four years at TD Securities Automated Trading, formerly Headlands Tech Global Markets, working on systematic fixed income trading. Before that, I was an applied scientist at Amazon, working on ML and optimization for personalization, causal inference, and supply chain.
+
+Gymnastics has been a lifelong thing. I still love tossing a tkatchev or two. Vegan since 2016.

@@ -125,16 +125,21 @@ window.Quarto = {
     <a class="nav-link" href="../writing.html"> 
 <span class="menu-text">Writing</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
-<span class="menu-text">About</span></a>
-  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/SuhrudKulkarni"> <i class="bi bi-github" role="img">
 </i> 
 <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/suhrud-kulkarni-3a820488"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://www.strava.com/athletes/25074162"> 
+<span class="menu-text">Strava</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -181,7 +186,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="wait-times-near-capacity">§2 Wait times near capacity</h2>
 <p>A simple model of an open queue, the M/M/1, has an exact formula for the average wait,</p>
 <p><span class="math display">\[W = \frac{\rho}{\mu(1 - \rho)},\]</span></p>
-<p>where <span class="math inline">\(\mu\)</span> is the rate at which the system can serve items and <span class="math inline">\(\rho = \lambda / \mu\)</span> is the utilization, the fraction of capacity in use. At <span class="math inline">\(\rho = 0.5\)</span> the average wait is 1 service time. At <span class="math inline">\(\rho = 0.9\)</span> it is 9. At <span class="math inline">\(\rho = 0.99\)</span> it is 99.</p>
+<p>where <span class="math inline">\(\lambda\)</span> is the arrival rate (as in §1), <span class="math inline">\(\mu\)</span> is the rate at which the system can serve items, and <span class="math inline">\(\rho = \lambda / \mu\)</span> is the utilization, the fraction of capacity in use. At <span class="math inline">\(\rho = 0.5\)</span> the average wait is 1 service time. At <span class="math inline">\(\rho = 0.9\)</span> it is 9. At <span class="math inline">\(\rho = 0.99\)</span> it is 99.</p>
 <p>Throughput, the rate at which the system completes work, equals <span class="math inline">\(\lambda\)</span> all the way up to saturation. So throughput stays flat while the tail of the latency distribution is already getting much worse. This is why p99 latency, the time the slowest 1 percent of requests take, is the right metric for a service under load, and why most teams target a utilization of 70 to 80 percent rather than running closer to capacity.</p>
 <p>M/M/1 is the cleanest case, with Poisson arrivals and exponential service times. Real systems almost always have correlated arrivals and heavy tails, and the wait blows up faster than the formula predicts.</p>
 </section>
