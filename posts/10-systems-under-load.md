@@ -16,7 +16,7 @@ A simple model of an open queue, the M/M/1, has an exact formula for the average
 
 $$W = \frac{\rho}{\mu(1 - \rho)},$$
 
-where $\mu$ is the rate at which the system can serve items and $\rho = \lambda / \mu$ is the utilization, the fraction of capacity in use. At $\rho = 0.5$ the average wait is 1 service time. At $\rho = 0.9$ it is 9. At $\rho = 0.99$ it is 99.
+where $\lambda$ is the arrival rate (as in §1), $\mu$ is the rate at which the system can serve items, and $\rho = \lambda / \mu$ is the utilization, the fraction of capacity in use. At $\rho = 0.5$ the average wait is 1 service time. At $\rho = 0.9$ it is 9. At $\rho = 0.99$ it is 99.
 
 Throughput, the rate at which the system completes work, equals $\lambda$ all the way up to saturation. So throughput stays flat while the tail of the latency distribution is already getting much worse. This is why p99 latency, the time the slowest 1 percent of requests take, is the right metric for a service under load, and why most teams target a utilization of 70 to 80 percent rather than running closer to capacity.
 
