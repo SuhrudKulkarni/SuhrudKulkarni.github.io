@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Suhrud Kulkarni</title>
+<title>clipping – Suhrud Kulkarni</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,22 +23,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-5a0ba323179d7325533c9aa34684b9d4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-5a0ba323179d7325533c9aa34684b9d4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -67,8 +67,37 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -78,7 +107,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Suhrud Kulkarni</span>
     </a>
   </div>
@@ -89,11 +118,11 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./writing.html"> 
+    <a class="nav-link" href="../writing.html"> 
 <span class="menu-text">Writing</span></a>
   </li>  
 </ul>
@@ -123,42 +152,59 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#robustness-and-clipping" id="toc-robustness-and-clipping" class="nav-link active" data-scroll-target="#robustness-and-clipping">Robustness and clipping</a>
+  <ul class="collapse">
+  <li><a href="#robust-estimators" id="toc-robust-estimators" class="nav-link" data-scroll-target="#robust-estimators">§1 Robust estimators</a></li>
+  <li><a href="#function-side-clipping" id="toc-function-side-clipping" class="nav-link" data-scroll-target="#function-side-clipping">§2 Function-side clipping</a></li>
+  <li><a href="#assumptions-of-clipping" id="toc-assumptions-of-clipping" class="nav-link" data-scroll-target="#assumptions-of-clipping">§3 Assumptions of clipping</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Suhrud Kulkarni</h1>
-</div>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
-<div class="quarto-title-meta">
 
-    
-  
-    
-  </div>
-  
+<section id="robustness-and-clipping" class="level1">
+<h1>Robustness and clipping</h1>
+<p>There are two places we can put a guardrail against bad data inputs: on the input itself by cleaning the data before a function sees it, or on the function output. Input-side cleaning works when the input is a data matrix sitting in memory. Function-side clipping contains function behavior directly, including when the input only exists transiently inside the function.</p>
+<section id="robust-estimators" class="level2">
+<h2 class="anchored" data-anchor-id="robust-estimators">§1 Robust estimators</h2>
+<p>Simple input-side cleaning, like winsorizing a column, dropping observations more than 2 std. devs. from the mean, or trimming the top and bottom percentiles, protects a data pipeline by capping any observation before it enters.</p>
+<p>Robust estimators are built from statistics that are insensitive to outliers. The simplest is the median absolute deviation, where the mean is replaced with the median and the standard deviation with <span class="math inline">\(\mathrm{MAD}(x) = \mathrm{median}(|x_i - \mathrm{median}(x)|)\)</span>. The median has breakdown point <span class="math inline">\(1/2\)</span>, so up to half the data can be perturbed and the median is still unchanged.</p>
+<p>However, for higher-dimensional messy data like bond yields, the simple methods can be insufficient. Prices can be stale because an issue may not trade in size for weeks, and a single issuer can have a systematic dislocation from a debt restructuring or an acquisition. The means, standard deviations, and sample covariance computed from this kind of data reflect the stale prices and dislocations as much as the underlying returns.</p>
+<p>For these cases there are several robust estimators, one of which is the Minimum Covariance Determinant (MCD) estimator. MCD returns the covariance of the subset of observations with the smallest sample-covariance determinant, ignoring the rest. Running PCA on an MCD covariance can give loadings closer to factor structure by filtering out corruption.</p>
+</section>
+<section id="function-side-clipping" class="level2">
+<h2 class="anchored" data-anchor-id="function-side-clipping">§2 Function-side clipping</h2>
+<p>Gradients, PPO importance ratios, and backtest PnL are all quantities that exist inside a function and can’t be cleaned ahead of time. Thus we need to put the guardrail on the function output. Gradient clipping caps the gradient norm at some <span class="math inline">\(c\)</span>, PPO ratio clipping caps the policy ratio at <span class="math inline">\([1-\epsilon, 1+\epsilon]\)</span>, and per-trade PnL clipping caps the PnL contribution from any single trade.</p>
+<p>Each of these thresholds encodes a prior on how the function ought to behave. The PPO bound <span class="math inline">\(\epsilon\)</span> reflects an expectation that the new policy stays within <span class="math inline">\(1 \pm \epsilon\)</span> of the old. The PnL multiple reflects an expectation that a single trade much larger than the median is corruption rather than signal.</p>
+</section>
+<section id="assumptions-of-clipping" class="level2">
+<h2 class="anchored" data-anchor-id="assumptions-of-clipping">§3 Assumptions of clipping</h2>
+<p>Clipping bounds the function’s range, and assumes the function’s behavior outside that range is unwanted. We further assume that whatever was clipped was an outlier.</p>
+<p>For example, we might see a backtest trade with 50x median PnL. It could be from a bad third-party price, a bad fill, or a stale mark on a bond that didn’t trade that day, in which case the clip caught a genuine outlier. Or the trade may only fill in simulation because the backtest assumes client flow it wouldn’t see in production, in which case the clip hides a structural backtest bug. Both look the same after the clip.</p>
+<p>Similarly, a clipped gradient might be one bad minibatch, or a sign that the learning rate is too high and every gradient from here on will get clipped. PPO ratio clipping keeps the updated policy from straying too far from the reference. However, a clipped ratio might be a noisy advantage estimate, or it might be an actual divergence between the new and old policies.</p>
+<p>Clustering or a rising fraction of clipped observations can point to a systematic issue, and keeping the raw pre-clip values around is useful for debugging.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li><strong>Rousseeuw &amp; Leroy 1987</strong>, <em>Robust Regression and Outlier Detection</em>.</li>
+<li><strong>Huber 1981</strong>, <em>Robust Statistics</em>.</li>
+</ul>
 
 
-</header>
-
-
-<div class="quarto-figure quarto-figure-left">
-<figure class="figure">
-<p><img src="images/headshot.jpg" class="img-fluid quarto-figure quarto-figure-left figure-img" width="220"></p>
-</figure>
-</div>
-<p>It’s pretty fun to find similar ideas across unrelated fields. It’s that “wait, I’ve seen this before” feeling. Many of the pieces here are about it.</p>
-<p>Right now I’m on a noncompete, going deep on modern deep learning. Working notes are on the <a href="./writing.html">Writing</a> page.</p>
-<p>Previously, I spent four years at TD Securities Automated Trading, formerly Headlands Tech Global Markets, working on systematic fixed income trading. Before that, I was an applied scientist at Amazon, working on ML and optimization for personalization, causal inference, and supply chain.</p>
-<p>Gymnastics has been a lifelong thing. I still love tossing a tkatchev or two. Vegan since 2016.</p>
-
-
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -251,7 +297,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/SuhrudKulkarni\.github\.io\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

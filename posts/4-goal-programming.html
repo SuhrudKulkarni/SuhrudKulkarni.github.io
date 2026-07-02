@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>fisher-information – Suhrud Kulkarni</title>
+<title>goal-programming – Suhrud Kulkarni</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -157,16 +157,13 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#fisher-information-again-and-again" id="toc-fisher-information-again-and-again" class="nav-link active" data-scroll-target="#fisher-information-again-and-again">Fisher Information again and again</a>
+  <li><a href="#goal-programming-hyperparameters-as-economic-coefficients" id="toc-goal-programming-hyperparameters-as-economic-coefficients" class="nav-link active" data-scroll-target="#goal-programming-hyperparameters-as-economic-coefficients">Goal programming: hyperparameters as economic coefficients</a>
   <ul class="collapse">
-  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation">Notation</a></li>
-  <li><a href="#newtons-method" id="toc-newtons-method" class="nav-link" data-scroll-target="#newtons-method">§1 Newton’s method</a></li>
-  <li><a href="#gauss-newton" id="toc-gauss-newton" class="nav-link" data-scroll-target="#gauss-newton">§2 Gauss-Newton</a></li>
-  <li><a href="#natural-gradient" id="toc-natural-gradient" class="nav-link" data-scroll-target="#natural-gradient">§3 Natural gradient</a></li>
-  <li><a href="#trpo" id="toc-trpo" class="nav-link" data-scroll-target="#trpo">§4 TRPO</a></li>
-  <li><a href="#adam" id="toc-adam" class="nav-link" data-scroll-target="#adam">§5 Adam</a></li>
-  <li><a href="#evolution-strategies" id="toc-evolution-strategies" class="nav-link" data-scroll-target="#evolution-strategies">§6 Evolution strategies</a></li>
-  <li><a href="#cramér-rao" id="toc-cramér-rao" class="nav-link" data-scroll-target="#cramér-rao">§7 Cramér-Rao</a></li>
+  <li><a href="#the-lagrangian-and-the-shadow-price" id="toc-the-lagrangian-and-the-shadow-price" class="nav-link" data-scroll-target="#the-lagrangian-and-the-shadow-price">§1 The Lagrangian and the shadow price</a></li>
+  <li><a href="#three-categories-of-coefficients" id="toc-three-categories-of-coefficients" class="nav-link" data-scroll-target="#three-categories-of-coefficients">§2 Three categories of coefficients</a></li>
+  <li><a href="#weighted-goal-programming-and-possible-issues" id="toc-weighted-goal-programming-and-possible-issues" class="nav-link" data-scroll-target="#weighted-goal-programming-and-possible-issues">§3 Weighted goal programming and possible issues</a></li>
+  <li><a href="#lexicographic-goal-programming" id="toc-lexicographic-goal-programming" class="nav-link" data-scroll-target="#lexicographic-goal-programming">§4 Lexicographic goal programming</a></li>
+  <li><a href="#questions-in-rlhf" id="toc-questions-in-rlhf" class="nav-link" data-scroll-target="#questions-in-rlhf">§5 Questions in RLHF</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
@@ -178,83 +175,53 @@ window.Quarto = {
 
 
 
-<section id="fisher-information-again-and-again" class="level1">
-<h1>Fisher Information again and again</h1>
-<p>The Fisher Information matrix shows up across optimization, geometry, and statistics. It appears as a preconditioner in natural gradient, a constraint in TRPO, and a lower bound in Cramér-Rao.</p>
-<section id="notation" class="level2">
-<h2 class="anchored" data-anchor-id="notation">Notation</h2>
-<ul>
-<li><span class="math inline">\(\theta \in \mathbb{R}^d\)</span> are model parameters</li>
-<li><span class="math inline">\(p_{\theta}(x)\)</span> is the model distribution</li>
-<li><span class="math inline">\(\ell(\theta) = -\log p_{\theta}(x)\)</span> is the negative log-likelihood</li>
-<li><span class="math inline">\(g = \nabla_\theta \ell\)</span> is the score (gradient of log-likelihood)</li>
-<li><span class="math inline">\(H = \nabla^2_\theta \ell\)</span> is the Hessian</li>
-<li><span class="math inline">\(F = \mathbb{E}[\nabla \log p_{\theta}(x) \cdot \nabla \log p_{\theta}(x)^\top]\)</span> is the Fisher Information matrix, with expectations under <span class="math inline">\(p_\theta\)</span></li>
-</ul>
+<section id="goal-programming-hyperparameters-as-economic-coefficients" class="level1">
+<h1>Goal programming: hyperparameters as economic coefficients</h1>
+<p>A loss with multiple weighted terms is a multi-objective optimization, with the weights setting the exchange rates between the objectives. In ML the weights are hyperparameters tuned in validation, while operations research calls this setup goal programming. When a weight has an economic meaning, it can be measured and used directly. In the Lagrangian formulation, the multiplier on a constraint is a shadow price with real units.</p>
+<section id="the-lagrangian-and-the-shadow-price" class="level2">
+<h2 class="anchored" data-anchor-id="the-lagrangian-and-the-shadow-price">§1 The Lagrangian and the shadow price</h2>
+<p>For a constrained problem <span class="math inline">\(\min f(x)\)</span> s.t. <span class="math inline">\(g(x) \leq b\)</span>, the Lagrangian is</p>
+<p><span class="math display">\[L(x, \lambda) = f(x) + \lambda (g(x) - b),\]</span></p>
+<p>and the dual set up is:</p>
+<p><span class="math display">\[g(\lambda) = \min_x L(x, \lambda), \qquad \max_{\lambda \geq 0} g(\lambda).\]</span></p>
+<p>At the optimum,</p>
+<p><span class="math display">\[\lambda^\ast = \frac{\partial L^\ast}{\partial b},\]</span></p>
+<p>so <span class="math inline">\(\lambda^\ast\)</span> is the marginal return on relaxing the constraint by one unit, with units of “objective per unit of <span class="math inline">\(g\)</span>.” It is the shadow price of the constraint and the primal price the optimizer pays to use the resource.</p>
+<p>The unconstrained penalty form <span class="math inline">\(\min f(x) + \lambda g(x)\)</span> has the same interpretation. <span class="math inline">\(\lambda\)</span>’s units correspond to a real-world exchange rate and it can be measured.</p>
+<p>For example, in trading, the minimum-variance hedge ratio <span class="math inline">\(\beta^\ast = \mathrm{Cov}(X, Y) / \mathrm{Var}(Y)\)</span> from <a href="../posts/1-variance-reduction.html">Post 1</a> is fit by regression and used directly in the hedge. In tech, economists at large companies run lengthy experiments that produce dollar-value coefficients for things like a click, a percentage point of retention, or the long-term cost of missing a delivery promise. These values are used directly in downstream objectives.</p>
+<p>The marginal-return interpretation also lets us compare strategies sharing a limited resource. For example, when allocating capital between two trading strategies, we can give to the one with the higher <span class="math inline">\(\lambda^\ast\)</span> until the two are equal.</p>
 </section>
-<section id="newtons-method" class="level2">
-<h2 class="anchored" data-anchor-id="newtons-method">§1 Newton’s method</h2>
-<p>Given a loss <span class="math inline">\(\ell(\theta)\)</span>, Newton’s method takes a quadratic Taylor expansion around <span class="math inline">\(\theta\)</span>:</p>
-<p><span class="math display">\[\ell(\theta + \Delta) \approx \ell(\theta) + g^\top \Delta + \tfrac{1}{2} \Delta^\top H \Delta\]</span></p>
-<p>Minimizing over <span class="math inline">\(\Delta\)</span> gives</p>
-<p><span class="math display">\[\Delta^\ast = -H^{-1} g\]</span></p>
-<p>which has quadratic convergence near a minimum. This is useful for convex problems but runs into issues for non-convex ones, where <span class="math inline">\(H\)</span> might not be PSD and the Newton step might not point downhill. Forming and inverting <span class="math inline">\(H\)</span> is also intractable at scale. Classical algorithms make Newton tractable by approximating the inverse, like the quasi-Newton method BFGS, or by constraining the step, like trust-region methods including Levenberg-Marquardt.</p>
+<section id="three-categories-of-coefficients" class="level2">
+<h2 class="anchored" data-anchor-id="three-categories-of-coefficients">§2 Three categories of coefficients</h2>
+<p>Goal programming separates the coefficients in an objective into three kinds.</p>
+<p><strong>Prices</strong> are measured exchange rates with units and confidence intervals, like the hedge ratio or the dollar-value-of-a-click.</p>
+<p><strong>Dials</strong> are coefficients without a measurement, tuned on validation as a guess at the exchange rate.</p>
+<p><strong>Constraints</strong> are goals that cannot be violated, either because they are hard limits like a book-size cap or a regulatory rule, or because the cost of violation cannot be priced.</p>
 </section>
-<section id="gauss-newton" class="level2">
-<h2 class="anchored" data-anchor-id="gauss-newton">§2 Gauss-Newton</h2>
-<p>For negative log-likelihood losses, the expected Hessian equals the Fisher Information matrix under the model:</p>
-<p><span class="math display">\[\mathbb{E}[H] = \mathbb{E}[\nabla \log p \cdot \nabla \log p^\top] = F\]</span></p>
-<p>Gauss-Newton replaces <span class="math inline">\(H\)</span> in the Newton step with the empirical version of the right-hand side. The substitute is PSD by construction, and forming it only requires gradients rather than second derivatives.</p>
+<section id="weighted-goal-programming-and-possible-issues" class="level2">
+<h2 class="anchored" data-anchor-id="weighted-goal-programming-and-possible-issues">§3 Weighted goal programming and possible issues</h2>
+<p>Weighted goal programming writes the objective as</p>
+<p><span class="math display">\[\min \sum_i w_i \cdot f_i,\]</span></p>
+<p>where <span class="math inline">\(f_i\)</span> is the <span class="math inline">\(i\)</span>th penalty term and <span class="math inline">\(w_i\)</span> is its weight.</p>
+<p>Take a trading strategy that maximizes PnL minus a penalty on falling out of the top-N liquidity-provider ranking, <span class="math inline">\(\max \text{PnL} - w \cdot d_{\text{rank}}\)</span>. The optimizer can quote more passively, trade less, capture more spread per trade on the trades that do fill, and earn more under the objective. The cost is to long-term client relationships and to future flow, and gets realized over a longer period than the backtest window used to set <span class="math inline">\(w\)</span>. It is also sticky, because once flow routes to competitors, winning it back is much harder.</p>
+<p>We can instead write this as <span class="math inline">\(\max \text{PnL}\)</span> s.t. <span class="math inline">\(\text{rank} \leq N\)</span>, so that the optimizer cannot game the objective by sacrificing rank in a short window.</p>
+<p>When the cost of violation is unobservable in the data used to set the weight, that weight can be mispriced, and a constraint is the conservative choice.</p>
 </section>
-<section id="natural-gradient" class="level2">
-<h2 class="anchored" data-anchor-id="natural-gradient">§3 Natural gradient</h2>
-<p>If we want a metric on distributions instead of on parameters, a common choice is the KL divergence <span class="math inline">\(D_{KL}(p_{\theta} \| p_{\theta + \Delta})\)</span>. Its second-order Taylor expansion gives:</p>
-<p><span class="math display">\[D_{KL}(p_{\theta} \| p_{\theta + \Delta}) \approx \tfrac{1}{2} \Delta^\top F \Delta\]</span></p>
-<p>So <span class="math inline">\(F\)</span> is the metric tensor of the manifold of distributions <span class="math inline">\(\{p_{\theta}\}\)</span>, and the natural gradient is steepest descent in this geometry:</p>
-<p><span class="math display">\[\Delta_{\text{nat}} = -F^{-1} g\]</span></p>
-<p><a href="https://jaketae.github.io/study/natural-gradient/">Jake Tae’s post on natural gradient</a> covers the Taylor-expansion derivation and the constrained-optimization framing.</p>
-<p>The first-order term in the Taylor expansion vanishes because of the score identity <span class="math inline">\(\mathbb{E}[\nabla \log p_{\theta}] = 0\)</span> under <span class="math inline">\(p_\theta\)</span>, the same identity that cancels the baseline out of the policy gradient in <a href="../posts/1-variance-reduction.html">Post 1</a>.</p>
-<p>KL is one member of the f-divergence family, all of which have the same second-order Taylor expansion <span class="math inline">\(\tfrac{1}{2} \Delta^\top F \Delta\)</span> up to a constant factor. The choice of divergence sets higher-order behavior, but the metric tensor is <span class="math inline">\(F\)</span> either way.</p>
+<section id="lexicographic-goal-programming" class="level2">
+<h2 class="anchored" data-anchor-id="lexicographic-goal-programming">§4 Lexicographic goal programming</h2>
+<p>Another form of goal programming avoids weight assumptions by solving in strict priority order. We solve for <span class="math inline">\(f_1^\ast = \min f_1\)</span>, then <span class="math inline">\(\min f_2\)</span> s.t. <span class="math inline">\(f_1 \leq f_1^\ast\)</span>, then <span class="math inline">\(\min f_3\)</span> s.t. <span class="math inline">\(f_1 \leq f_1^\ast, f_2 \leq f_2^\ast\)</span>, and so on. Each solved objective becomes a constraint for the next.</p>
+<p>This is the same as the weighted version in the limit where each higher-priority weight is infinitely larger than the next. The cost is computational, since now a single optimization is replaced by a sequence. To me, system prompts in LLMs look a lot like a lexicographic ordering, where the model satisfies a hard safety check before optimizing for helpfulness.</p>
 </section>
-<section id="trpo" class="level2">
-<h2 class="anchored" data-anchor-id="trpo">§4 TRPO</h2>
-<p>In TRPO (trust-region policy optimization) we take the largest gradient step we can while keeping the new policy within <span class="math inline">\(\delta\)</span> KL of the old:</p>
-<p><span class="math display">\[\max_{\Delta} g^\top \Delta \quad \text{s.t.} \quad D_{KL}(\pi_\theta \| \pi_{\theta + \Delta}) \leq \delta\]</span></p>
-<p>By substituting the second-order expansion <span class="math inline">\(D_{KL} \approx \tfrac{1}{2} \Delta^\top F \Delta\)</span>, the constraint becomes quadratic, but objective stays linear. Then the solution is <span class="math inline">\(\Delta \propto F^{-1} g\)</span>.</p>
-<p>TRPO and Levenberg-Marquardt are both trust-region methods that bound the step to stay where the quadratic approximation holds. The metric is swapped from Euclidean (<span class="math inline">\(\|\Delta\|_2 \leq \delta\)</span>) to KL (<span class="math inline">\(\tfrac{1}{2} \Delta^\top F \Delta \leq \delta\)</span>), so the same <span class="math inline">\(F\)</span> that multiplies the gradient in natural gradient shows up here as the constraint matrix.</p>
-</section>
-<section id="adam" class="level2">
-<h2 class="anchored" data-anchor-id="adam">§5 Adam</h2>
-<p>Adam’s update is</p>
-<p><span class="math display">\[\Delta = -\eta \frac{m}{\sqrt{v} + \epsilon}\]</span></p>
-<p>where <span class="math inline">\(m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t\)</span> and <span class="math inline">\(v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2\)</span>.</p>
-<p>The <span class="math inline">\(v\)</span> term is an exponential-moving-average estimate of the diagonal of <span class="math inline">\(\mathbb{E}[g g^\top]\)</span>, which is the same outer product of scores from the Hessian decomposition in §2 and equals the Fisher in expectation. Dividing by <span class="math inline">\(\sqrt{v}\)</span> scales the gradient by the diagonal of an approximate inverse Fisher.</p>
-<p>Adam, thus, looks like the natural gradient simplified with only the diagonal of <span class="math inline">\(F\)</span>, and a square-root in place.</p>
-</section>
-<section id="evolution-strategies" class="level2">
-<h2 class="anchored" data-anchor-id="evolution-strategies">§6 Evolution strategies</h2>
-<p>NES is often used for black-box optimization, where <span class="math inline">\(\ell(\theta)\)</span> is available but <span class="math inline">\(\nabla \ell\)</span> is not, like in a non-differentiable simulator or a real-world experiment. We put a search distribution <span class="math inline">\(p_{\phi}(\theta)\)</span> over parameters, sample <span class="math inline">\(\theta_i \sim p_{\phi}\)</span>, evaluate <span class="math inline">\(\ell(\theta_i)\)</span>, and update <span class="math inline">\(\phi\)</span> to shift the search distribution toward lower-loss regions.</p>
-<p>The gradient of the expected loss in <span class="math inline">\(\phi\)</span> uses the score-function trick:</p>
-<p><span class="math display">\[\nabla_\phi \mathbb{E}_{\theta \sim p_{\phi}}[\ell(\theta)] = \mathbb{E}_{\theta \sim p_{\phi}}[\ell(\theta) \nabla_\phi \log p_{\phi}(\theta)]\]</span></p>
-<p>This is the same <strong>REINFORCE</strong>-style identity from <a href="../posts/1-variance-reduction.html">Post 1</a>, applied to parameters sampled from a search distribution instead of actions sampled from a policy.</p>
-<p>Multiplying that gradient by <span class="math inline">\(F^{-1}\)</span>, where <span class="math inline">\(F\)</span> is the Fisher Information of <span class="math inline">\(p_{\phi}\)</span>, yields the natural gradient.</p>
-</section>
-<section id="cramér-rao" class="level2">
-<h2 class="anchored" data-anchor-id="cramér-rao">§7 Cramér-Rao</h2>
-<p>We also see it in statistics. For any unbiased estimator <span class="math inline">\(\hat\theta\)</span> of a parameter <span class="math inline">\(\theta\)</span>:</p>
-<p><span class="math display">\[\mathrm{Cov}(\hat\theta) \succeq F^{-1} \]</span></p>
-<p>The size of <span class="math inline">\(F\)</span> along a parameter direction measures how informative the data is about that direction.</p>
-<p>It also shows up in the score test, where the test statistic <span class="math inline">\(g^\top F^{-1} g\)</span> uses <span class="math inline">\(F\)</span> as the same metric on parameter space that natural gradient uses to scale the step.</p>
+<section id="questions-in-rlhf" class="level2">
+<h2 class="anchored" data-anchor-id="questions-in-rlhf">§5 Questions in RLHF</h2>
+<p>RLHF objectives combine several weighted terms, and it seems like the weights on these are tuned rather than measured.</p>
+<p>A length penalty has units of reward per token, which seems measurable from a user-preference study. Sycophancy looks more like the market-maker case, where the cost is to user trust over time and sticky, so a constraint might be safer than a penalty. Lastly, for inflammatory and harmful content, no weight is acceptable and we need to enforce a hard constraint.</p>
+<p>I appreciate that we cannot backprop through a hard constraint, so enforcing one means either a code rule, projection, or a soft Lagrangian. The Lagrangian route puts us back at a weighted penalty, with all the mispricing risks from §3 if <span class="math inline">\(\lambda\)</span> is not a price.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <ul>
-<li><strong>Amari 1998</strong>, “Natural Gradient Works Efficiently in Learning” (<em>Neural Computation</em>).</li>
-<li><strong>Amari &amp; Nagaoka</strong>, <em>Methods of Information Geometry</em>.</li>
-<li><strong>Schulman, Levine, Moritz, Jordan, Abbeel 2015</strong>, “Trust Region Policy Optimization” (ICML).</li>
-<li><strong>Kingma &amp; Ba 2014</strong>, “Adam: A Method for Stochastic Optimization” (arXiv:1412.6980).</li>
-<li><strong>Wierstra, Schaul, Glasmachers, Sun, Peters, Schmidhuber 2014</strong>, “Natural Evolution Strategies” (JMLR).</li>
-<li><strong>Casella &amp; Berger</strong>, <em>Statistical Inference</em> (Cramér-Rao bound).</li>
+<li><strong>Boyd &amp; Vandenberghe</strong>, <em>Convex Optimization</em>, Ch. 5 (Lagrangian duality and sensitivity).</li>
 </ul>
 
 
@@ -352,7 +319,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/SuhrudKulkarni\.github\.io\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

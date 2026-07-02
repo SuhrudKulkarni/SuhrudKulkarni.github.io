@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>lambdamart-dpo – Suhrud Kulkarni</title>
+<title>systems-under-load – Suhrud Kulkarni</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -157,13 +157,12 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#personalization-and-rlhf" id="toc-personalization-and-rlhf" class="nav-link active" data-scroll-target="#personalization-and-rlhf">Personalization and RLHF</a>
+  <li><a href="#systems-under-load" id="toc-systems-under-load" class="nav-link active" data-scroll-target="#systems-under-load">Systems under load</a>
   <ul class="collapse">
-  <li><a href="#bradley-terry" id="toc-bradley-terry" class="nav-link" data-scroll-target="#bradley-terry">§1 Bradley-Terry</a></li>
-  <li><a href="#ranknet-lambdarank-lambdamart" id="toc-ranknet-lambdarank-lambdamart" class="nav-link" data-scroll-target="#ranknet-lambdarank-lambdamart">§2 RankNet, LambdaRank, LambdaMART</a></li>
-  <li><a href="#dpo" id="toc-dpo" class="nav-link" data-scroll-target="#dpo">§3 DPO</a></li>
-  <li><a href="#other-parallels" id="toc-other-parallels" class="nav-link" data-scroll-target="#other-parallels">§4 Other parallels</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#littles-law-and-headroom" id="toc-littles-law-and-headroom" class="nav-link" data-scroll-target="#littles-law-and-headroom">§1 Little’s Law and headroom</a></li>
+  <li><a href="#wait-times-near-capacity" id="toc-wait-times-near-capacity" class="nav-link" data-scroll-target="#wait-times-near-capacity">§2 Wait times near capacity</a></li>
+  <li><a href="#amdahls-law" id="toc-amdahls-law" class="nav-link" data-scroll-target="#amdahls-law">§3 Amdahl’s law</a></li>
+  <li><a href="#trading-in-a-sell-off" id="toc-trading-in-a-sell-off" class="nav-link" data-scroll-target="#trading-in-a-sell-off">§4 Trading in a sell-off</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -174,59 +173,34 @@ window.Quarto = {
 
 
 
-<section id="personalization-and-rlhf" class="level1">
-<h1>Personalization and RLHF</h1>
-<p>Personalization and RLHF both convert preference data into pointwise gradients with the same Bradley-Terry model: RankNet (2005) for ranking, DPO (2023) for RLHF.</p>
-<section id="bradley-terry" class="level2">
-<h2 class="anchored" data-anchor-id="bradley-terry">§1 Bradley-Terry</h2>
-<p>Given a pair of items <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>, Bradley-Terry parameterizes the log-odds <span class="math inline">\(\log \frac{P(i \succ j)}{1 - P(i \succ j)}\)</span> as a score difference <span class="math inline">\(s_i - s_j\)</span>. Solving for <span class="math inline">\(P(i \succ j)\)</span> gives the logistic form:</p>
-<p><span class="math display">\[P(i \succ j) = \sigma(s_i - s_j) = \frac{1}{1 + \exp(-(s_i - s_j))}.\]</span></p>
-<p>The scores are learned from observed pairwise preferences. With label <span class="math inline">\(y_{ij} = 1\)</span> if <span class="math inline">\(i\)</span> beat <span class="math inline">\(j\)</span> and <span class="math inline">\(0\)</span> otherwise, the log-likelihood is</p>
-<p><span class="math display">\[\mathcal{L} = \sum_{(i, j) \in \mathcal{D}} \left[ y_{ij} \log \sigma(s_i - s_j) + (1 - y_{ij}) \log \sigma(s_j - s_i) \right].\]</span></p>
-<p>In the above, preferences are assumed to be transitive: if <span class="math inline">\(s_i &gt; s_j\)</span> and <span class="math inline">\(s_j &gt; s_k\)</span>, then <span class="math inline">\(s_i &gt; s_k\)</span>. Often times in personalization we see people’s preferences don’t have a consistent transitive order. Nonetheless, B-T is good enough. Pairs are easier to label than lists, and getting all pairs right would give the right listwise ranking like in bubble sort.</p>
+<section id="systems-under-load" class="level1">
+<h1>Systems under load</h1>
+<p>Software systems, hardware, queues, and trading desks all have to work correctly under load. As any of them fills up, the cost of the next unit of work grows superlinearly, and the slowest requests get much slower before the system stops accepting new ones. The same formulas can be used to analyze all four.</p>
+<section id="littles-law-and-headroom" class="level2">
+<h2 class="anchored" data-anchor-id="littles-law-and-headroom">§1 Little’s Law and headroom</h2>
+<p>At equilibrium, the average number of items in flight equals the arrival rate times the average time each item spends in the system,</p>
+<p><span class="math display">\[L = \lambda W.\]</span></p>
+<p>The formula applies to queues at a database, requests through an API, jobs on a cluster, and orders in a market, and since arrivals come in bursts, <span class="math inline">\(\lambda\)</span> over a short window can be much higher than the long-run mean. A system sized for the long-run mean saturates whenever a burst arrives, and we hope the backlog clears on its own, otherwise the system falls over.</p>
 </section>
-<section id="ranknet-lambdarank-lambdamart" class="level2">
-<h2 class="anchored" data-anchor-id="ranknet-lambdarank-lambdamart">§2 RankNet, LambdaRank, LambdaMART</h2>
-<p>Personalization uses Bradley-Terry through ranking models. RankNet puts a neural network scoring function on top of B-T, so pairwise preference data gives pointwise gradients on item scores.</p>
-<p>The ranking metric we optimize is the discounted cumulative gain, <span class="math inline">\(\text{DCG} = \sum_i \text{rel}_i / \log_2(i+1)\)</span>, where <span class="math inline">\(\text{rel}_i\)</span> is the relevance of the item at position <span class="math inline">\(i\)</span>. The denominator penalizes mistakes at the top more than mistakes lower down, since people scroll less. NDCG normalizes DCG so it lies in <span class="math inline">\([0, 1]\)</span>.</p>
-<p>LambdaRank keeps the B-T pairwise loss but weights each pair’s gradient by the change in NDCG that pair-swapping would produce. Swaps near the top of the ranking get larger gradients.</p>
-<p>LambdaMART keeps the same B-T pairwise loss and the NDCG weighting, and uses gradient-boosted trees as the scoring function. XGBoost exposes this as <code>rank:pairwise</code> and <code>rank:ndcg</code>, which makes LambdaMART very accessible.</p>
+<section id="wait-times-near-capacity" class="level2">
+<h2 class="anchored" data-anchor-id="wait-times-near-capacity">§2 Wait times near capacity</h2>
+<p>A simple model of an open queue, the M/M/1, has an exact formula for the average wait,</p>
+<p><span class="math display">\[W = \frac{\rho}{\mu(1 - \rho)},\]</span></p>
+<p>where <span class="math inline">\(\lambda\)</span> is the arrival rate (as in §1), <span class="math inline">\(\mu\)</span> is the rate at which the system can serve items, and <span class="math inline">\(\rho = \lambda / \mu\)</span> is the utilization, the fraction of capacity in use. At <span class="math inline">\(\rho = 0.5\)</span> the average wait is 1 service time. At <span class="math inline">\(\rho = 0.9\)</span> it is 9. At <span class="math inline">\(\rho = 0.99\)</span> it is 99.</p>
+<p>Throughput, the rate at which the system completes work, equals <span class="math inline">\(\lambda\)</span> all the way up to saturation. So throughput stays flat while the tail of the latency distribution is already getting much worse. This is why p99 latency, the time the slowest 1 percent of requests take, is the right metric for a service under load, and why most teams target a utilization of 70 to 80 percent rather than running closer to capacity.</p>
+<p>M/M/1 is the cleanest case, with Poisson arrivals and exponential service times. Real systems almost always have correlated arrivals and heavy tails, and the wait blows up faster than the formula predicts.</p>
 </section>
-<section id="dpo" class="level2">
-<h2 class="anchored" data-anchor-id="dpo">§3 DPO</h2>
-<p>Similarly, DPO (2023) applies Bradley-Terry to LLM preference pairs, with prompt <span class="math inline">\(s\)</span>, chosen response <span class="math inline">\(a_w\)</span>, and rejected response <span class="math inline">\(a_l\)</span>, using the notation of <span class="math inline">\(S, A\)</span> from Post 1. Applying the B-T assumption on the rewards gives:</p>
-<p><span class="math display">\[P(a_w \succ a_l \mid s) = \sigma\big(r(s, a_w) - r(s, a_l)\big).\]</span></p>
-<p>Applying a bandit assumption on Post 1’s <span class="math inline">\(Q^\pi(s, a)\)</span> gives the RLHF objective with the reward model <span class="math inline">\(r(s, a)\)</span> in place of <span class="math inline">\(Q\)</span>:</p>
-<p><span class="math display">\[\max_\pi \mathbb{E}_{a \sim \pi}[r(s, a)] - \beta \cdot D_{KL}(\pi \| \pi_{\text{ref}}),\]</span></p>
-<p>where <span class="math inline">\(\pi_{\text{ref}}\)</span> is a reference policy that keeps <span class="math inline">\(\pi\)</span> from wandering too far away. The sum over timesteps from Post 1 has summed out to one term, with no per-token credit assignment, similar to GRPO. A Lagrangian on the KL constraint gives:</p>
-<p><span class="math display">\[\pi^\ast(a \mid s) = \frac{1}{Z(s)} \pi_{\text{ref}}(a \mid s) \exp\left(\frac{1}{\beta} r(s, a)\right),\]</span></p>
-<details>
-<summary>
-Derivation: Lagrangian on the KL constraint
-</summary>
-<p>Expand KL:</p>
-<p><span class="math display">\[J(\pi) = \sum_a \pi(a \mid s) r(s, a) - \beta \sum_a \pi(a \mid s) \log \frac{\pi(a \mid s)}{\pi_{\text{ref}}(a \mid s)}.\]</span></p>
-<p>We add the Lagrangian for <span class="math inline">\(\sum_a \pi(a \mid s) = 1\)</span> and take <span class="math inline">\(\partial / \partial \pi(a \mid s)\)</span>:</p>
-<p><span class="math display">\[r(s, a) - \beta \log \frac{\pi(a \mid s)}{\pi_{\text{ref}}(a \mid s)} - \beta - \lambda = 0.\]</span></p>
-<p>We solve for <span class="math inline">\(\pi\)</span>:</p>
-<p><span class="math display">\[\pi(a \mid s) = \pi_{\text{ref}}(a \mid s) \exp\left(\frac{r(s, a)}{\beta} - 1 - \frac{\lambda}{\beta}\right).\]</span></p>
-<p>Duality showing up again.</p>
-</details>
-<p><span class="math display">\[r(s, a) = \beta \log \frac{\pi^\ast(a \mid s)}{\pi_{\text{ref}}(a \mid s)} + \beta \log Z(s),\]</span></p>
-<p><span class="math display">\[r(s, a_w) - r(s, a_l) = \beta \log \frac{\pi^\ast(a_w \mid s)}{\pi_{\text{ref}}(a_w \mid s)} - \beta \log \frac{\pi^\ast(a_l \mid s)}{\pi_{\text{ref}}(a_l \mid s)},\]</span></p>
-<p><span class="math display">\[\mathcal{L}_{\text{DPO}} = -\mathbb{E}_{(s, a_w, a_l)} \log \sigma\left(\beta \log \frac{\pi(a_w \mid s)}{\pi_{\text{ref}}(a_w \mid s)} - \beta \log \frac{\pi(a_l \mid s)}{\pi_{\text{ref}}(a_l \mid s)}\right).\]</span></p>
+<section id="amdahls-law" class="level2">
+<h2 class="anchored" data-anchor-id="amdahls-law">§3 Amdahl’s law</h2>
+<p>Suppose a workload has a serial part that cannot be parallelized and a parallel part that can be split across <span class="math inline">\(n\)</span> workers. If <span class="math inline">\(s\)</span> is the fraction of the work that is serial, the speedup from <span class="math inline">\(n\)</span> workers is</p>
+<p><span class="math display">\[S(n) = \frac{1}{s + (1 - s)/n}.\]</span></p>
+<p>As <span class="math inline">\(n\)</span> grows, <span class="math inline">\(S\)</span> approaches <span class="math inline">\(1/s\)</span>. The serial fraction sets a hard ceiling on speedup no matter how much hardware we add. A workload that is 95 percent parallel can never run more than 20 times faster than serial.</p>
+<p>Amdahl and the M/M/1 wait formula are both one over a sum where a small term, <span class="math inline">\(s\)</span> in Amdahl and <span class="math inline">\(1-\rho\)</span> in M/M/1, dominates the cost at the limit.</p>
 </section>
-<section id="other-parallels" class="level2">
-<h2 class="anchored" data-anchor-id="other-parallels">§4 Other parallels</h2>
-<p><strong>Exploration-exploitation.</strong> In personalization there’s a balance between showing what people like and collecting info on new content or things people haven’t seen. I’ve seen epsilon-greedy, LinUCB, and Thompson sampling as some ways to deal with this tradeoff. It seems like RLHF could have at least two versions of the same tradeoff: which prompt-response pairs to send for annotation, and at generation time with sampling temperature.</p>
-<p><strong>Diversity.</strong> When we recommend a list of items, the marginal value of similar items decreases. Personalization utility is often modelled as submodular in the list, which formalizes the idea of diminishing returns through the inequality <span class="math inline">\(f(X \cup Y) \leq f(X) + f(Y)\)</span>. So shoe content might be very relevant, but the tenth shoe post doesn’t add much for the user. The LLM analogy might be worse than submodular: one paragraph in a given style is good, but the tenth paragraph in the same style could be grating. It seems like a version of this might show up in RLHF, where models start producing homogeneous outputs.</p>
-</section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
-<ul>
-<li><strong>Burges 2010</strong>, “From RankNet to LambdaRank to LambdaMART: An Overview”.</li>
-<li><strong>Rafailov et al.&nbsp;2023</strong>, “Direct Preference Optimization: Your Language Model is Secretly a Reward Model”.</li>
-</ul>
+<section id="trading-in-a-sell-off" class="level2">
+<h2 class="anchored" data-anchor-id="trading-in-a-sell-off">§4 Trading in a sell-off</h2>
+<p>The same pattern shows up on a trading desk. A market maker provides liquidity, meaning it stands ready to buy from anyone who wants to sell and sell to anyone who wants to buy. It earns a small spread for performing that service, and to keep things manageable, it tries to keep its portfolio flat. When the market sells off, everyone is trying to sell at once, and the market maker is at risk of buying far too much. Since everyone else is selling, buying more later will be easy, so what traders often do is step back on the buy side, find out how aggressively they need to sell down the inventory they already have, and only then start buying again. The inventory is the queue, the selling pressure is the arrival rate, and stepping back on the buys is reducing <span class="math inline">\(\lambda\)</span>.</p>
+<p>The trader and the load balancer are running the same algorithm. When the cost of taking on one more unit of work rises faster than the value of doing so, we back off and let the queue drain. In both settings, the tail is the leading indicator and the mean is the lagging one.</p>
 
 
 </section>
@@ -323,7 +297,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/SuhrudKulkarni\.github\.io\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

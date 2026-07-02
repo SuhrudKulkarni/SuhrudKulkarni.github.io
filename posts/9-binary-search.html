@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>goal-programming – Suhrud Kulkarni</title>
+<title>binary-search – Suhrud Kulkarni</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -157,13 +191,13 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#goal-programming-hyperparameters-as-economic-coefficients" id="toc-goal-programming-hyperparameters-as-economic-coefficients" class="nav-link active" data-scroll-target="#goal-programming-hyperparameters-as-economic-coefficients">Goal programming: hyperparameters as economic coefficients</a>
+  <li><a href="#binary-search-and-bisection" id="toc-binary-search-and-bisection" class="nav-link active" data-scroll-target="#binary-search-and-bisection">Binary search and bisection</a>
   <ul class="collapse">
-  <li><a href="#the-lagrangian-and-the-shadow-price" id="toc-the-lagrangian-and-the-shadow-price" class="nav-link" data-scroll-target="#the-lagrangian-and-the-shadow-price">§1 The Lagrangian and the shadow price</a></li>
-  <li><a href="#three-categories-of-coefficients" id="toc-three-categories-of-coefficients" class="nav-link" data-scroll-target="#three-categories-of-coefficients">§2 Three categories of coefficients</a></li>
-  <li><a href="#weighted-goal-programming-and-possible-issues" id="toc-weighted-goal-programming-and-possible-issues" class="nav-link" data-scroll-target="#weighted-goal-programming-and-possible-issues">§3 Weighted goal programming and possible issues</a></li>
-  <li><a href="#lexicographic-goal-programming" id="toc-lexicographic-goal-programming" class="nav-link" data-scroll-target="#lexicographic-goal-programming">§4 Lexicographic goal programming</a></li>
-  <li><a href="#questions-in-rlhf" id="toc-questions-in-rlhf" class="nav-link" data-scroll-target="#questions-in-rlhf">§5 Questions in RLHF</a></li>
+  <li><a href="#the-template" id="toc-the-template" class="nav-link" data-scroll-target="#the-template">§1 The template</a></li>
+  <li><a href="#the-monotone-predicate" id="toc-the-monotone-predicate" class="nav-link" data-scroll-target="#the-monotone-predicate">§2 The monotone predicate</a></li>
+  <li><a href="#koko-eating-bananas" id="toc-koko-eating-bananas" class="nav-link" data-scroll-target="#koko-eating-bananas">§3 Koko Eating Bananas</a></li>
+  <li><a href="#bisection-root-finding" id="toc-bisection-root-finding" class="nav-link" data-scroll-target="#bisection-root-finding">§4 Bisection root-finding</a></li>
+  <li><a href="#secant-and-newton" id="toc-secant-and-newton" class="nav-link" data-scroll-target="#secant-and-newton">§5 Secant and Newton</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
@@ -175,53 +209,94 @@ window.Quarto = {
 
 
 
-<section id="goal-programming-hyperparameters-as-economic-coefficients" class="level1">
-<h1>Goal programming: hyperparameters as economic coefficients</h1>
-<p>A loss with multiple weighted terms is a multi-objective optimization, with the weights setting the exchange rates between the objectives. In ML the weights are hyperparameters tuned in validation, while operations research calls this setup goal programming. When a weight has an economic meaning, it can be measured and used directly. In the Lagrangian formulation, the multiplier on a constraint is a shadow price with real units.</p>
-<section id="the-lagrangian-and-the-shadow-price" class="level2">
-<h2 class="anchored" data-anchor-id="the-lagrangian-and-the-shadow-price">§1 The Lagrangian and the shadow price</h2>
-<p>For a constrained problem <span class="math inline">\(\min f(x)\)</span> s.t. <span class="math inline">\(g(x) \leq b\)</span>, the Lagrangian is</p>
-<p><span class="math display">\[L(x, \lambda) = f(x) + \lambda (g(x) - b),\]</span></p>
-<p>and the dual set up is:</p>
-<p><span class="math display">\[g(\lambda) = \min_x L(x, \lambda), \qquad \max_{\lambda \geq 0} g(\lambda).\]</span></p>
-<p>At the optimum,</p>
-<p><span class="math display">\[\lambda^\ast = \frac{\partial L^\ast}{\partial b},\]</span></p>
-<p>so <span class="math inline">\(\lambda^\ast\)</span> is the marginal return on relaxing the constraint by one unit, with units of “objective per unit of <span class="math inline">\(g\)</span>.” It is the shadow price of the constraint and the primal price the optimizer pays to use the resource.</p>
-<p>The unconstrained penalty form <span class="math inline">\(\min f(x) + \lambda g(x)\)</span> has the same interpretation. <span class="math inline">\(\lambda\)</span>’s units correspond to a real-world exchange rate and it can be measured.</p>
-<p>For example, in trading, the minimum-variance hedge ratio <span class="math inline">\(\beta^\ast = \mathrm{Cov}(X, Y) / \mathrm{Var}(Y)\)</span> from <a href="../posts/1-variance-reduction.html">Post 1</a> is fit by regression and used directly in the hedge. In tech, economists at large companies run lengthy experiments that produce dollar-value coefficients for things like a click, a percentage point of retention, or the long-term cost of missing a delivery promise. These values are used directly in downstream objectives.</p>
-<p>The marginal-return interpretation also lets us compare strategies sharing a limited resource. For example, when allocating capital between two trading strategies, we can give to the one with the higher <span class="math inline">\(\lambda^\ast\)</span> until the two are equal.</p>
+<section id="binary-search-and-bisection" class="level1">
+<h1>Binary search and bisection</h1>
+<p>We can make all binary search problems look the same. The recurring theme is a <code>while</code> loop, a midpoint, a predicate, and a window update. We only have to change the predicate. This same template can solve integer search, root-finding on continuous functions, sampling from inverse CDFs, and bond yield-to-maturity.</p>
+<section id="the-template" class="level2">
+<h2 class="anchored" data-anchor-id="the-template">§1 The template</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> Fpredicate<span class="op">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> binary<span class="op">(</span><span class="dt">int</span> low<span class="op">,</span> <span class="dt">int</span> high<span class="op">,</span> Fpredicate<span class="op">&amp;&amp;</span> predicate<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="op">(</span>low <span class="op">&lt;</span> high<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="kw">auto</span> midpoint <span class="op">=</span> <span class="op">(</span>low <span class="op">+</span> high<span class="op">)</span> <span class="op">/</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>predicate<span class="op">(</span>midpoint<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>            high <span class="op">=</span> midpoint<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            low <span class="op">=</span> midpoint <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> low<span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The loop maintains the invariant that our answer is in <code>[low, high)</code>, halving the interval at each step until the window collapses to a single point.</p>
 </section>
-<section id="three-categories-of-coefficients" class="level2">
-<h2 class="anchored" data-anchor-id="three-categories-of-coefficients">§2 Three categories of coefficients</h2>
-<p>Goal programming separates the coefficients in an objective into three kinds.</p>
-<p><strong>Prices</strong> are measured exchange rates with units and confidence intervals, like the hedge ratio or the dollar-value-of-a-click.</p>
-<p><strong>Dials</strong> are coefficients without a measurement, tuned on validation as a guess at the exchange rate.</p>
-<p><strong>Constraints</strong> are goals that cannot be violated, either because they are hard limits like a book-size cap or a regulatory rule, or because the cost of violation cannot be priced.</p>
+<section id="the-monotone-predicate" class="level2">
+<h2 class="anchored" data-anchor-id="the-monotone-predicate">§2 The monotone predicate</h2>
+<p>The template works whenever the predicate is monotone: <code>false</code> everywhere up to some threshold, then <code>true</code> from there on. The return value is the leftmost <code>x</code> where the predicate flips. The “sorted array search” formulation is the simplest case where the predicate is <code>arr[i] &gt;= target</code>.</p>
 </section>
-<section id="weighted-goal-programming-and-possible-issues" class="level2">
-<h2 class="anchored" data-anchor-id="weighted-goal-programming-and-possible-issues">§3 Weighted goal programming and possible issues</h2>
-<p>Weighted goal programming writes the objective as</p>
-<p><span class="math display">\[\min \sum_i w_i \cdot f_i,\]</span></p>
-<p>where <span class="math inline">\(f_i\)</span> is the <span class="math inline">\(i\)</span>th penalty term and <span class="math inline">\(w_i\)</span> is its weight.</p>
-<p>Take a trading strategy that maximizes PnL minus a penalty on falling out of the top-N liquidity-provider ranking, <span class="math inline">\(\max \text{PnL} - w \cdot d_{\text{rank}}\)</span>. The optimizer can quote more passively, trade less, capture more spread per trade on the trades that do fill, and earn more under the objective. The cost is to long-term client relationships and to future flow, and gets realized over a longer period than the backtest window used to set <span class="math inline">\(w\)</span>. It is also sticky, because once flow routes to competitors, winning it back is much harder.</p>
-<p>We can instead write this as <span class="math inline">\(\max \text{PnL}\)</span> s.t. <span class="math inline">\(\text{rank} \leq N\)</span>, so that the optimizer cannot game the objective by sacrificing rank in a short window.</p>
-<p>When the cost of violation is unobservable in the data used to set the weight, that weight can be mispriced, and a constraint is the conservative choice.</p>
+<section id="koko-eating-bananas" class="level2">
+<h2 class="anchored" data-anchor-id="koko-eating-bananas">§3 Koko Eating Bananas</h2>
+<p>A famous leetcode problem: given piles of bananas and <code>h</code> hours, find the minimum eating speed that finishes all piles in time. We just have to specify the lambda:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> minEatingSpeed<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&amp;</span> piles<span class="op">,</span> <span class="at">const</span> <span class="dt">int</span> hours_available<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="kw">auto</span> can_eat <span class="op">=</span> <span class="op">[&amp;](</span><span class="at">const</span> <span class="kw">auto</span> eating_speed<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span> required_hours <span class="op">=</span> <span class="bu">std::</span>ranges::fold_left<span class="op">(</span>piles<span class="op">,</span> <span class="fl">0.0</span><span class="op">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                <span class="op">[&amp;](</span><span class="at">const</span> <span class="kw">auto</span> running_hours<span class="op">,</span> <span class="at">const</span> <span class="kw">auto</span> pile_size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">return</span> running_hours <span class="op">+</span> <span class="bu">std::</span>ceil<span class="op">(</span>pile_size <span class="op">*</span> <span class="fl">1.0</span> <span class="op">/</span> eating_speed<span class="op">);</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                <span class="op">});</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> required_hours <span class="op">&lt;=</span> hours_available<span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> binary<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="op">*</span><span class="bu">std::</span>ranges::max_element<span class="op">(</span>piles<span class="op">),</span> can_eat<span class="op">);</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="lexicographic-goal-programming" class="level2">
-<h2 class="anchored" data-anchor-id="lexicographic-goal-programming">§4 Lexicographic goal programming</h2>
-<p>Another form of goal programming avoids weight assumptions by solving in strict priority order. We solve for <span class="math inline">\(f_1^\ast = \min f_1\)</span>, then <span class="math inline">\(\min f_2\)</span> s.t. <span class="math inline">\(f_1 \leq f_1^\ast\)</span>, then <span class="math inline">\(\min f_3\)</span> s.t. <span class="math inline">\(f_1 \leq f_1^\ast, f_2 \leq f_2^\ast\)</span>, and so on. Each solved objective becomes a constraint for the next.</p>
-<p>This is the same as the weighted version in the limit where each higher-priority weight is infinitely larger than the next. The cost is computational, since now a single optimization is replaced by a sequence. To me, system prompts in LLMs look a lot like a lexicographic ordering, where the model satisfies a hard safety check before optimizing for helpfulness.</p>
+<section id="bisection-root-finding" class="level2">
+<h2 class="anchored" data-anchor-id="bisection-root-finding">§4 Bisection root-finding</h2>
+<p>For continuous monotone functions, we replace integer indices with floats, swap <code>low &lt; high</code> for <code>low + TOL &lt; high</code>, and change the predicate to a sign check on <code>predicate(x)</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">constexpr</span> <span class="kw">auto</span> TOL <span class="op">=</span> <span class="fl">1.0e-9</span><span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> Fpredicate<span class="op">&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> bisect<span class="op">(</span><span class="dt">double</span> low<span class="op">,</span> <span class="dt">double</span> high<span class="op">,</span> Fpredicate<span class="op">&amp;&amp;</span> predicate<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="op">(</span>low <span class="op">+</span> TOL <span class="op">&lt;</span> high<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="kw">auto</span> midpoint <span class="op">=</span> <span class="op">(</span>low <span class="op">+</span> high<span class="op">)</span> <span class="op">/</span> <span class="fl">2.0</span><span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>predicate<span class="op">(</span>midpoint<span class="op">)</span> <span class="op">&gt;=</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            high <span class="op">=</span> midpoint<span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>            low <span class="op">=</span> midpoint<span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> low<span class="op">;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Bond yield-to-maturity.</strong> Given cash flows <span class="math inline">\(c_1, \ldots, c_n\)</span> at times <span class="math inline">\(t_1, \ldots, t_n\)</span> and market price <span class="math inline">\(P\)</span>, the yield <span class="math inline">\(y\)</span> solves <span class="math inline">\(P = \sum_i c_i \cdot e^{-y \cdot t_i}\)</span>. Price is monotonically decreasing in yield, so <span class="math inline">\(P - \text{present value}\)</span> goes from negative below the true yield to positive above it. Yields are expressed as decimals (<code>0.05</code> = 5%), and we bracket up to 25% to allow distressed high-yield names.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> price_minus_present_value <span class="op">=</span> <span class="op">[&amp;](</span><span class="at">const</span> <span class="kw">auto</span> yield<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> discounted <span class="op">=</span> <span class="bu">std::</span>views::zip<span class="op">(</span>cashflows<span class="op">,</span> times<span class="op">)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span> <span class="bu">std::</span>views::transform<span class="op">([&amp;](</span><span class="at">const</span> <span class="kw">auto</span><span class="op">&amp;</span> cashflow_and_time<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span><span class="op">&amp;</span> <span class="op">[</span>cashflow<span class="op">,</span> time<span class="op">]</span> <span class="op">=</span> cashflow_and_time<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> cashflow <span class="op">*</span> <span class="bu">std::</span>exp<span class="op">(-</span>yield <span class="op">*</span> time<span class="op">);</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> market_price <span class="op">-</span> <span class="bu">std::</span>ranges::fold_left<span class="op">(</span>discounted<span class="op">,</span> <span class="fl">0.0</span><span class="op">,</span> <span class="bu">std::</span>plus<span class="op">{});</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> computed_yield <span class="op">=</span> bisect<span class="op">(-</span><span class="fl">0.05</span><span class="op">,</span> <span class="fl">0.25</span><span class="op">,</span> price_minus_present_value<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Inverse CDF sampling.</strong> Inverse-transform sampling draws from an arbitrary distribution via a uniform random variable: given a CDF <span class="math inline">\(F\)</span> and <span class="math inline">\(u \sim U[0,1]\)</span>, the sample is the <span class="math inline">\(x\)</span> with <span class="math inline">\(F(x) = u\)</span>. When <span class="math inline">\(F^{-1}\)</span> has no closed form, bisection on <span class="math inline">\(F(x) - u\)</span> gets the sample:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> cdf_minus_u <span class="op">=</span> <span class="op">[&amp;](</span><span class="at">const</span> <span class="kw">auto</span> x<span class="op">)</span> <span class="op">{</span> <span class="cf">return</span> F<span class="op">(</span>x<span class="op">)</span> <span class="op">-</span> u<span class="op">;</span> <span class="op">};</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> x <span class="op">=</span> bisect<span class="op">(</span>x_low<span class="op">,</span> x_high<span class="op">,</span> cdf_minus_u<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In both cases the predicate is just the function shifted by a constant, like market price minus present value or CDF minus the uniform draw, so the search becomes a root-finding problem on the shifted function.</p>
+<p>Binary search returns the leftmost <span class="math inline">\(x\)</span> where the predicate flips, which on a continuous function is the leftmost <span class="math inline">\(x\)</span> where the sign changes. This works when the function crosses zero once. If the function only touches zero, like a double root, or is identically zero across an interval, no sign change exists and the bisection result is not well-defined.</p>
 </section>
-<section id="questions-in-rlhf" class="level2">
-<h2 class="anchored" data-anchor-id="questions-in-rlhf">§5 Questions in RLHF</h2>
-<p>RLHF objectives combine several weighted terms, and it seems like the weights on these are tuned rather than measured.</p>
-<p>A length penalty has units of reward per token, which seems measurable from a user-preference study. Sycophancy looks more like the market-maker case, where the cost is to user trust over time and sticky, so a constraint might be safer than a penalty. Lastly, for inflammatory and harmful content, no weight is acceptable and we need to enforce a hard constraint.</p>
-<p>I appreciate that we cannot backprop through a hard constraint, so enforcing one means either a code rule, projection, or a soft Lagrangian. The Lagrangian route puts us back at a weighted penalty, with all the mispricing risks from §3 if <span class="math inline">\(\lambda\)</span> is not a price.</p>
+<section id="secant-and-newton" class="level2">
+<h2 class="anchored" data-anchor-id="secant-and-newton">§5 Secant and Newton</h2>
+<p>Bisection needs only monotonicity and converges linearly with each step halving the interval, but two stronger assumptions on the function give us faster convergence.</p>
+<p><strong>Secant method</strong> Assuming continuity, we can approximate the root by linear interpolation between two recent points. Given <span class="math inline">\((x_{n-1}, f(x_{n-1}))\)</span> and <span class="math inline">\((x_n, f(x_n))\)</span>:</p>
+<p><span class="math display">\[x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}\]</span></p>
+<p>We get superlinear convergence when the function is smooth near the root.</p>
+<p><strong>Newton’s method</strong> Assuming differentiability, we can use <span class="math inline">\(f'\)</span> directly:</p>
+<p><span class="math display">\[x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}\]</span></p>
+<p>Newton converges quadratically near a simple root, so each step roughly doubles the number of correct digits, but we need <span class="math inline">\(f'\)</span> in closed form. <a href="../posts/2-fisher-information.html">Post 2</a> covered Newton in the optimization context, where the goal is finding roots of the gradient.</p>
+<p>As we get more problem structure and compute, we can escalate from bisection to secant to Newton.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <ul>
-<li><strong>Boyd &amp; Vandenberghe</strong>, <em>Convex Optimization</em>, Ch. 5 (Lagrangian duality and sensitivity).</li>
+<li><strong>Burden &amp; Faires</strong>, <em>Numerical Analysis</em>, chapter 2 (solutions of equations in one variable).</li>
 </ul>
 
 
@@ -319,7 +394,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/SuhrudKulkarni\.github\.io\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

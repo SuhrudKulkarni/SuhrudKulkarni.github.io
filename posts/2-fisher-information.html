@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>binary-search – Suhrud Kulkarni</title>
+<title>fisher-information – Suhrud Kulkarni</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,40 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -191,13 +157,16 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#binary-search-and-bisection" id="toc-binary-search-and-bisection" class="nav-link active" data-scroll-target="#binary-search-and-bisection">Binary search and bisection</a>
+  <li><a href="#fisher-information-again-and-again" id="toc-fisher-information-again-and-again" class="nav-link active" data-scroll-target="#fisher-information-again-and-again">Fisher Information again and again</a>
   <ul class="collapse">
-  <li><a href="#the-template" id="toc-the-template" class="nav-link" data-scroll-target="#the-template">§1 The template</a></li>
-  <li><a href="#the-monotone-predicate" id="toc-the-monotone-predicate" class="nav-link" data-scroll-target="#the-monotone-predicate">§2 The monotone predicate</a></li>
-  <li><a href="#koko-eating-bananas" id="toc-koko-eating-bananas" class="nav-link" data-scroll-target="#koko-eating-bananas">§3 Koko Eating Bananas</a></li>
-  <li><a href="#bisection-root-finding" id="toc-bisection-root-finding" class="nav-link" data-scroll-target="#bisection-root-finding">§4 Bisection root-finding</a></li>
-  <li><a href="#secant-and-newton" id="toc-secant-and-newton" class="nav-link" data-scroll-target="#secant-and-newton">§5 Secant and Newton</a></li>
+  <li><a href="#notation" id="toc-notation" class="nav-link" data-scroll-target="#notation">Notation</a></li>
+  <li><a href="#newtons-method" id="toc-newtons-method" class="nav-link" data-scroll-target="#newtons-method">§1 Newton’s method</a></li>
+  <li><a href="#gauss-newton" id="toc-gauss-newton" class="nav-link" data-scroll-target="#gauss-newton">§2 Gauss-Newton</a></li>
+  <li><a href="#natural-gradient" id="toc-natural-gradient" class="nav-link" data-scroll-target="#natural-gradient">§3 Natural gradient</a></li>
+  <li><a href="#trpo" id="toc-trpo" class="nav-link" data-scroll-target="#trpo">§4 TRPO</a></li>
+  <li><a href="#adam" id="toc-adam" class="nav-link" data-scroll-target="#adam">§5 Adam</a></li>
+  <li><a href="#evolution-strategies" id="toc-evolution-strategies" class="nav-link" data-scroll-target="#evolution-strategies">§6 Evolution strategies</a></li>
+  <li><a href="#cramér-rao" id="toc-cramér-rao" class="nav-link" data-scroll-target="#cramér-rao">§7 Cramér-Rao</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
@@ -209,94 +178,83 @@ window.Quarto = {
 
 
 
-<section id="binary-search-and-bisection" class="level1">
-<h1>Binary search and bisection</h1>
-<p>We can make all binary search problems look the same. The recurring theme is a <code>while</code> loop, a midpoint, a predicate, and a window update. We only have to change the predicate. This same template can solve integer search, root-finding on continuous functions, sampling from inverse CDFs, and bond yield-to-maturity.</p>
-<section id="the-template" class="level2">
-<h2 class="anchored" data-anchor-id="the-template">§1 The template</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> Fpredicate<span class="op">&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> binary<span class="op">(</span><span class="dt">int</span> low<span class="op">,</span> <span class="dt">int</span> high<span class="op">,</span> Fpredicate<span class="op">&amp;&amp;</span> predicate<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="op">(</span>low <span class="op">&lt;</span> high<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="kw">auto</span> midpoint <span class="op">=</span> <span class="op">(</span>low <span class="op">+</span> high<span class="op">)</span> <span class="op">/</span> <span class="dv">2</span><span class="op">;</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>predicate<span class="op">(</span>midpoint<span class="op">))</span> <span class="op">{</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>            high <span class="op">=</span> midpoint<span class="op">;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            low <span class="op">=</span> midpoint <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> low<span class="op">;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The loop maintains the invariant that our answer is in <code>[low, high)</code>, halving the interval at each step until the window collapses to a single point.</p>
+<section id="fisher-information-again-and-again" class="level1">
+<h1>Fisher Information again and again</h1>
+<p>The Fisher Information matrix shows up across optimization, geometry, and statistics. It appears as a preconditioner in natural gradient, a constraint in TRPO, and a lower bound in Cramér-Rao.</p>
+<section id="notation" class="level2">
+<h2 class="anchored" data-anchor-id="notation">Notation</h2>
+<ul>
+<li><span class="math inline">\(\theta \in \mathbb{R}^d\)</span> are model parameters</li>
+<li><span class="math inline">\(p_{\theta}(x)\)</span> is the model distribution</li>
+<li><span class="math inline">\(\ell(\theta) = -\log p_{\theta}(x)\)</span> is the negative log-likelihood</li>
+<li><span class="math inline">\(g = \nabla_\theta \ell\)</span> is the score (gradient of log-likelihood)</li>
+<li><span class="math inline">\(H = \nabla^2_\theta \ell\)</span> is the Hessian</li>
+<li><span class="math inline">\(F = \mathbb{E}[\nabla \log p_{\theta}(x) \cdot \nabla \log p_{\theta}(x)^\top]\)</span> is the Fisher Information matrix, with expectations under <span class="math inline">\(p_\theta\)</span></li>
+</ul>
 </section>
-<section id="the-monotone-predicate" class="level2">
-<h2 class="anchored" data-anchor-id="the-monotone-predicate">§2 The monotone predicate</h2>
-<p>The template works whenever the predicate is monotone: <code>false</code> everywhere up to some threshold, then <code>true</code> from there on. The return value is the leftmost <code>x</code> where the predicate flips. The “sorted array search” formulation is the simplest case where the predicate is <code>arr[i] &gt;= target</code>.</p>
+<section id="newtons-method" class="level2">
+<h2 class="anchored" data-anchor-id="newtons-method">§1 Newton’s method</h2>
+<p>Given a loss <span class="math inline">\(\ell(\theta)\)</span>, Newton’s method takes a quadratic Taylor expansion around <span class="math inline">\(\theta\)</span>:</p>
+<p><span class="math display">\[\ell(\theta + \Delta) \approx \ell(\theta) + g^\top \Delta + \tfrac{1}{2} \Delta^\top H \Delta\]</span></p>
+<p>Minimizing over <span class="math inline">\(\Delta\)</span> gives</p>
+<p><span class="math display">\[\Delta^\ast = -H^{-1} g\]</span></p>
+<p>which has quadratic convergence near a minimum. This is useful for convex problems but runs into issues for non-convex ones, where <span class="math inline">\(H\)</span> might not be PSD and the Newton step might not point downhill. Forming and inverting <span class="math inline">\(H\)</span> is also intractable at scale. Classical algorithms make Newton tractable by approximating the inverse, like the quasi-Newton method BFGS, or by constraining the step, like trust-region methods including Levenberg-Marquardt.</p>
 </section>
-<section id="koko-eating-bananas" class="level2">
-<h2 class="anchored" data-anchor-id="koko-eating-bananas">§3 Koko Eating Bananas</h2>
-<p>A famous leetcode problem: given piles of bananas and <code>h</code> hours, find the minimum eating speed that finishes all piles in time. We just have to specify the lambda:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> minEatingSpeed<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&amp;</span> piles<span class="op">,</span> <span class="at">const</span> <span class="dt">int</span> hours_available<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="kw">auto</span> can_eat <span class="op">=</span> <span class="op">[&amp;](</span><span class="at">const</span> <span class="kw">auto</span> eating_speed<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span> required_hours <span class="op">=</span> <span class="bu">std::</span>ranges::fold_left<span class="op">(</span>piles<span class="op">,</span> <span class="fl">0.0</span><span class="op">,</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                <span class="op">[&amp;](</span><span class="at">const</span> <span class="kw">auto</span> running_hours<span class="op">,</span> <span class="at">const</span> <span class="kw">auto</span> pile_size<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">return</span> running_hours <span class="op">+</span> <span class="bu">std::</span>ceil<span class="op">(</span>pile_size <span class="op">*</span> <span class="fl">1.0</span> <span class="op">/</span> eating_speed<span class="op">);</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                <span class="op">});</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> required_hours <span class="op">&lt;=</span> hours_available<span class="op">;</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> binary<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="op">*</span><span class="bu">std::</span>ranges::max_element<span class="op">(</span>piles<span class="op">),</span> can_eat<span class="op">);</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="gauss-newton" class="level2">
+<h2 class="anchored" data-anchor-id="gauss-newton">§2 Gauss-Newton</h2>
+<p>For negative log-likelihood losses, the expected Hessian equals the Fisher Information matrix under the model:</p>
+<p><span class="math display">\[\mathbb{E}[H] = \mathbb{E}[\nabla \log p \cdot \nabla \log p^\top] = F\]</span></p>
+<p>Gauss-Newton replaces <span class="math inline">\(H\)</span> in the Newton step with the empirical version of the right-hand side. The substitute is PSD by construction, and forming it only requires gradients rather than second derivatives.</p>
 </section>
-<section id="bisection-root-finding" class="level2">
-<h2 class="anchored" data-anchor-id="bisection-root-finding">§4 Bisection root-finding</h2>
-<p>For continuous monotone functions, we replace integer indices with floats, swap <code>low &lt; high</code> for <code>low + TOL &lt; high</code>, and change the predicate to a sign check on <code>predicate(x)</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">constexpr</span> <span class="kw">auto</span> TOL <span class="op">=</span> <span class="fl">1.0e-9</span><span class="op">;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> Fpredicate<span class="op">&gt;</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> bisect<span class="op">(</span><span class="dt">double</span> low<span class="op">,</span> <span class="dt">double</span> high<span class="op">,</span> Fpredicate<span class="op">&amp;&amp;</span> predicate<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="op">(</span>low <span class="op">+</span> TOL <span class="op">&lt;</span> high<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="kw">auto</span> midpoint <span class="op">=</span> <span class="op">(</span>low <span class="op">+</span> high<span class="op">)</span> <span class="op">/</span> <span class="fl">2.0</span><span class="op">;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>predicate<span class="op">(</span>midpoint<span class="op">)</span> <span class="op">&gt;=</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            high <span class="op">=</span> midpoint<span class="op">;</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>            low <span class="op">=</span> midpoint<span class="op">;</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> low<span class="op">;</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Bond yield-to-maturity.</strong> Given cash flows <span class="math inline">\(c_1, \ldots, c_n\)</span> at times <span class="math inline">\(t_1, \ldots, t_n\)</span> and market price <span class="math inline">\(P\)</span>, the yield <span class="math inline">\(y\)</span> solves <span class="math inline">\(P = \sum_i c_i \cdot e^{-y \cdot t_i}\)</span>. Price is monotonically decreasing in yield, so <span class="math inline">\(P - \text{present value}\)</span> goes from negative below the true yield to positive above it. Yields are expressed as decimals (<code>0.05</code> = 5%), and we bracket up to 25% to allow distressed high-yield names.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> price_minus_present_value <span class="op">=</span> <span class="op">[&amp;](</span><span class="at">const</span> <span class="kw">auto</span> yield<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="kw">auto</span> discounted <span class="op">=</span> <span class="bu">std::</span>views::zip<span class="op">(</span>cashflows<span class="op">,</span> times<span class="op">)</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span> <span class="bu">std::</span>views::transform<span class="op">([&amp;](</span><span class="at">const</span> <span class="kw">auto</span><span class="op">&amp;</span> cashflow_and_time<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="kw">auto</span><span class="op">&amp;</span> <span class="op">[</span>cashflow<span class="op">,</span> time<span class="op">]</span> <span class="op">=</span> cashflow_and_time<span class="op">;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> cashflow <span class="op">*</span> <span class="bu">std::</span>exp<span class="op">(-</span>yield <span class="op">*</span> time<span class="op">);</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> market_price <span class="op">-</span> <span class="bu">std::</span>ranges::fold_left<span class="op">(</span>discounted<span class="op">,</span> <span class="fl">0.0</span><span class="op">,</span> <span class="bu">std::</span>plus<span class="op">{});</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> computed_yield <span class="op">=</span> bisect<span class="op">(-</span><span class="fl">0.05</span><span class="op">,</span> <span class="fl">0.25</span><span class="op">,</span> price_minus_present_value<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Inverse CDF sampling.</strong> Inverse-transform sampling draws from an arbitrary distribution via a uniform random variable: given a CDF <span class="math inline">\(F\)</span> and <span class="math inline">\(u \sim U[0,1]\)</span>, the sample is the <span class="math inline">\(x\)</span> with <span class="math inline">\(F(x) = u\)</span>. When <span class="math inline">\(F^{-1}\)</span> has no closed form, bisection on <span class="math inline">\(F(x) - u\)</span> gets the sample:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> cdf_minus_u <span class="op">=</span> <span class="op">[&amp;](</span><span class="at">const</span> <span class="kw">auto</span> x<span class="op">)</span> <span class="op">{</span> <span class="cf">return</span> F<span class="op">(</span>x<span class="op">)</span> <span class="op">-</span> u<span class="op">;</span> <span class="op">};</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="at">const</span> <span class="kw">auto</span> x <span class="op">=</span> bisect<span class="op">(</span>x_low<span class="op">,</span> x_high<span class="op">,</span> cdf_minus_u<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>In both cases the predicate is just the function shifted by a constant, like market price minus present value or CDF minus the uniform draw, so the search becomes a root-finding problem on the shifted function.</p>
-<p>Binary search returns the leftmost <span class="math inline">\(x\)</span> where the predicate flips, which on a continuous function is the leftmost <span class="math inline">\(x\)</span> where the sign changes. This works when the function crosses zero once. If the function only touches zero, like a double root, or is identically zero across an interval, no sign change exists and the bisection result is not well-defined.</p>
+<section id="natural-gradient" class="level2">
+<h2 class="anchored" data-anchor-id="natural-gradient">§3 Natural gradient</h2>
+<p>If we want a metric on distributions instead of on parameters, a common choice is the KL divergence <span class="math inline">\(D_{KL}(p_{\theta} \| p_{\theta + \Delta})\)</span>. Its second-order Taylor expansion gives:</p>
+<p><span class="math display">\[D_{KL}(p_{\theta} \| p_{\theta + \Delta}) \approx \tfrac{1}{2} \Delta^\top F \Delta\]</span></p>
+<p>So <span class="math inline">\(F\)</span> is the metric tensor of the manifold of distributions <span class="math inline">\(\{p_{\theta}\}\)</span>, and the natural gradient is steepest descent in this geometry:</p>
+<p><span class="math display">\[\Delta_{\text{nat}} = -F^{-1} g\]</span></p>
+<p><a href="https://jaketae.github.io/study/natural-gradient/">Jake Tae’s post on natural gradient</a> covers the Taylor-expansion derivation and the constrained-optimization framing.</p>
+<p>The first-order term in the Taylor expansion vanishes because of the score identity <span class="math inline">\(\mathbb{E}[\nabla \log p_{\theta}] = 0\)</span> under <span class="math inline">\(p_\theta\)</span>, the same identity that cancels the baseline out of the policy gradient in <a href="../posts/1-variance-reduction.html">Post 1</a>.</p>
+<p>KL is one member of the f-divergence family, all of which have the same second-order Taylor expansion <span class="math inline">\(\tfrac{1}{2} \Delta^\top F \Delta\)</span> up to a constant factor. The choice of divergence sets higher-order behavior, but the metric tensor is <span class="math inline">\(F\)</span> either way.</p>
 </section>
-<section id="secant-and-newton" class="level2">
-<h2 class="anchored" data-anchor-id="secant-and-newton">§5 Secant and Newton</h2>
-<p>Bisection needs only monotonicity and converges linearly with each step halving the interval, but two stronger assumptions on the function give us faster convergence.</p>
-<p><strong>Secant method</strong> Assuming continuity, we can approximate the root by linear interpolation between two recent points. Given <span class="math inline">\((x_{n-1}, f(x_{n-1}))\)</span> and <span class="math inline">\((x_n, f(x_n))\)</span>:</p>
-<p><span class="math display">\[x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}\]</span></p>
-<p>We get superlinear convergence when the function is smooth near the root.</p>
-<p><strong>Newton’s method</strong> Assuming differentiability, we can use <span class="math inline">\(f'\)</span> directly:</p>
-<p><span class="math display">\[x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}\]</span></p>
-<p>Newton converges quadratically near a simple root, so each step roughly doubles the number of correct digits, but we need <span class="math inline">\(f'\)</span> in closed form. <a href="../posts/2-fisher-information.html">Post 2</a> covered Newton in the optimization context, where the goal is finding roots of the gradient.</p>
-<p>As we get more problem structure and compute, we can escalate from bisection to secant to Newton.</p>
+<section id="trpo" class="level2">
+<h2 class="anchored" data-anchor-id="trpo">§4 TRPO</h2>
+<p>In TRPO (trust-region policy optimization) we take the largest gradient step we can while keeping the new policy within <span class="math inline">\(\delta\)</span> KL of the old:</p>
+<p><span class="math display">\[\max_{\Delta} g^\top \Delta \quad \text{s.t.} \quad D_{KL}(\pi_\theta \| \pi_{\theta + \Delta}) \leq \delta\]</span></p>
+<p>By substituting the second-order expansion <span class="math inline">\(D_{KL} \approx \tfrac{1}{2} \Delta^\top F \Delta\)</span>, the constraint becomes quadratic, but objective stays linear. Then the solution is <span class="math inline">\(\Delta \propto F^{-1} g\)</span>.</p>
+<p>TRPO and Levenberg-Marquardt are both trust-region methods that bound the step to stay where the quadratic approximation holds. The metric is swapped from Euclidean (<span class="math inline">\(\|\Delta\|_2 \leq \delta\)</span>) to KL (<span class="math inline">\(\tfrac{1}{2} \Delta^\top F \Delta \leq \delta\)</span>), so the same <span class="math inline">\(F\)</span> that multiplies the gradient in natural gradient shows up here as the constraint matrix.</p>
+</section>
+<section id="adam" class="level2">
+<h2 class="anchored" data-anchor-id="adam">§5 Adam</h2>
+<p>Adam’s update is</p>
+<p><span class="math display">\[\Delta = -\eta \frac{m}{\sqrt{v} + \epsilon}\]</span></p>
+<p>where <span class="math inline">\(m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t\)</span> and <span class="math inline">\(v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2\)</span>.</p>
+<p>The <span class="math inline">\(v\)</span> term is an exponential-moving-average estimate of the diagonal of <span class="math inline">\(\mathbb{E}[g g^\top]\)</span>, which is the same outer product of scores from the Hessian decomposition in §2 and equals the Fisher in expectation. Dividing by <span class="math inline">\(\sqrt{v}\)</span> scales the gradient by the diagonal of an approximate inverse Fisher.</p>
+<p>Adam, thus, looks like the natural gradient simplified with only the diagonal of <span class="math inline">\(F\)</span>, and a square-root in place.</p>
+</section>
+<section id="evolution-strategies" class="level2">
+<h2 class="anchored" data-anchor-id="evolution-strategies">§6 Evolution strategies</h2>
+<p>NES is often used for black-box optimization, where <span class="math inline">\(\ell(\theta)\)</span> is available but <span class="math inline">\(\nabla \ell\)</span> is not, like in a non-differentiable simulator or a real-world experiment. We put a search distribution <span class="math inline">\(p_{\phi}(\theta)\)</span> over parameters, sample <span class="math inline">\(\theta_i \sim p_{\phi}\)</span>, evaluate <span class="math inline">\(\ell(\theta_i)\)</span>, and update <span class="math inline">\(\phi\)</span> to shift the search distribution toward lower-loss regions.</p>
+<p>The gradient of the expected loss in <span class="math inline">\(\phi\)</span> uses the score-function trick:</p>
+<p><span class="math display">\[\nabla_\phi \mathbb{E}_{\theta \sim p_{\phi}}[\ell(\theta)] = \mathbb{E}_{\theta \sim p_{\phi}}[\ell(\theta) \nabla_\phi \log p_{\phi}(\theta)]\]</span></p>
+<p>This is the same <strong>REINFORCE</strong>-style identity from <a href="../posts/1-variance-reduction.html">Post 1</a>, applied to parameters sampled from a search distribution instead of actions sampled from a policy.</p>
+<p>Multiplying that gradient by <span class="math inline">\(F^{-1}\)</span>, where <span class="math inline">\(F\)</span> is the Fisher Information of <span class="math inline">\(p_{\phi}\)</span>, yields the natural gradient.</p>
+</section>
+<section id="cramér-rao" class="level2">
+<h2 class="anchored" data-anchor-id="cramér-rao">§7 Cramér-Rao</h2>
+<p>We also see it in statistics. For any unbiased estimator <span class="math inline">\(\hat\theta\)</span> of a parameter <span class="math inline">\(\theta\)</span>:</p>
+<p><span class="math display">\[\mathrm{Cov}(\hat\theta) \succeq F^{-1} \]</span></p>
+<p>The size of <span class="math inline">\(F\)</span> along a parameter direction measures how informative the data is about that direction.</p>
+<p>It also shows up in the score test, where the test statistic <span class="math inline">\(g^\top F^{-1} g\)</span> uses <span class="math inline">\(F\)</span> as the same metric on parameter space that natural gradient uses to scale the step.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <ul>
-<li><strong>Burden &amp; Faires</strong>, <em>Numerical Analysis</em>, chapter 2 (solutions of equations in one variable).</li>
+<li><strong>Amari 1998</strong>, “Natural Gradient Works Efficiently in Learning” (<em>Neural Computation</em>).</li>
+<li><strong>Amari &amp; Nagaoka</strong>, <em>Methods of Information Geometry</em>.</li>
+<li><strong>Schulman, Levine, Moritz, Jordan, Abbeel 2015</strong>, “Trust Region Policy Optimization” (ICML).</li>
+<li><strong>Kingma &amp; Ba 2014</strong>, “Adam: A Method for Stochastic Optimization” (arXiv:1412.6980).</li>
+<li><strong>Wierstra, Schaul, Glasmachers, Sun, Peters, Schmidhuber 2014</strong>, “Natural Evolution Strategies” (JMLR).</li>
+<li><strong>Casella &amp; Berger</strong>, <em>Statistical Inference</em> (Cramér-Rao bound).</li>
 </ul>
 
 
@@ -394,7 +352,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/SuhrudKulkarni\.github\.io\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

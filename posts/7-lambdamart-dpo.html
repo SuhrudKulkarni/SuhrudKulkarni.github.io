@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Writing – Suhrud Kulkarni</title>
+<title>lambdamart-dpo – Suhrud Kulkarni</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,22 +23,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-5a0ba323179d7325533c9aa34684b9d4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-5a0ba323179d7325533c9aa34684b9d4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -67,8 +67,37 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -78,7 +107,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Suhrud Kulkarni</span>
     </a>
   </div>
@@ -89,11 +118,11 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./writing.html" aria-current="page"> 
+    <a class="nav-link" href="../writing.html"> 
 <span class="menu-text">Writing</span></a>
   </li>  
 </ul>
@@ -128,55 +157,79 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#posts" id="toc-posts" class="nav-link active" data-scroll-target="#posts">Posts</a></li>
-  <li><a href="#code" id="toc-code" class="nav-link" data-scroll-target="#code">Code</a></li>
+  <li><a href="#personalization-and-rlhf" id="toc-personalization-and-rlhf" class="nav-link active" data-scroll-target="#personalization-and-rlhf">Personalization and RLHF</a>
+  <ul class="collapse">
+  <li><a href="#bradley-terry" id="toc-bradley-terry" class="nav-link" data-scroll-target="#bradley-terry">§1 Bradley-Terry</a></li>
+  <li><a href="#ranknet-lambdarank-lambdamart" id="toc-ranknet-lambdarank-lambdamart" class="nav-link" data-scroll-target="#ranknet-lambdarank-lambdamart">§2 RankNet, LambdaRank, LambdaMART</a></li>
+  <li><a href="#dpo" id="toc-dpo" class="nav-link" data-scroll-target="#dpo">§3 DPO</a></li>
+  <li><a href="#other-parallels" id="toc-other-parallels" class="nav-link" data-scroll-target="#other-parallels">§4 Other parallels</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Writing</h1>
-</div>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
-<div class="quarto-title-meta">
 
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<p>Notes on RL, optimization, numerical methods, and applied techniques.</p>
-<section id="posts" class="level2">
-<h2 class="anchored" data-anchor-id="posts">Posts</h2>
-<ul>
-<li><p><strong><a href="./posts/1-variance-reduction.html">Variance reduction and GAE</a>.</strong> The same trick shows up in Monte Carlo (control variates), trading (minimum-variance hedge), quant finance (excess return), and policy-gradient RL (the advantage function). A walk through the unified formula and modern policy gradient methods like GAE and GRPO.</p></li>
-<li><p><strong><a href="./posts/2-fisher-information.html">Fisher Information again and again</a>.</strong> The same matrix appears as a preconditioner in natural gradient, a constraint in TRPO, a diagonal approximation in Adam, an ingredient in NES, and a lower bound in Cramér-Rao.</p></li>
-<li><p><strong><a href="./posts/4-goal-programming.html">Goal programming: hyperparameters as economic coefficients</a>.</strong> Lagrangian multipliers as shadow prices, prices we measure, dials we tune, constraints we cannot violate, and some questions about RLHF penalty terms.</p></li>
-<li><p><strong><a href="./posts/7-lambdamart-dpo.html">Personalization and RLHF</a>.</strong> Parallels between RankNet/LambdaMART and DPO, both built on Bradley-Terry.</p></li>
-<li><p><strong><a href="./posts/8-clipping.html">Robustness and clipping</a>.</strong> A guardrail against bad inputs can go on the input itself, with robust estimators like winsorization, MAD, or MCD, or on the function output, with gradient clipping, PPO ratio clipping, or per-trade PnL clipping.</p></li>
-<li><p><strong><a href="./posts/9-binary-search.html">Binary search and bisection</a>.</strong> A one-stop-shop C++23 template that solves integer search, bisection root-finding, bond yield-to-maturity, and inverse CDF sampling.</p></li>
-<li><p><strong><a href="./posts/10-systems-under-load.html">Systems under load</a>.</strong> Little’s Law, M/M/1 wait times, and Amdahl’s law, applied to software systems and to a trading desk in a sell-off.</p></li>
-</ul>
+<section id="personalization-and-rlhf" class="level1">
+<h1>Personalization and RLHF</h1>
+<p>Personalization and RLHF both convert preference data into pointwise gradients with the same Bradley-Terry model: RankNet (2005) for ranking, DPO (2023) for RLHF.</p>
+<section id="bradley-terry" class="level2">
+<h2 class="anchored" data-anchor-id="bradley-terry">§1 Bradley-Terry</h2>
+<p>Given a pair of items <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>, Bradley-Terry parameterizes the log-odds <span class="math inline">\(\log \frac{P(i \succ j)}{1 - P(i \succ j)}\)</span> as a score difference <span class="math inline">\(s_i - s_j\)</span>. Solving for <span class="math inline">\(P(i \succ j)\)</span> gives the logistic form:</p>
+<p><span class="math display">\[P(i \succ j) = \sigma(s_i - s_j) = \frac{1}{1 + \exp(-(s_i - s_j))}.\]</span></p>
+<p>The scores are learned from observed pairwise preferences. With label <span class="math inline">\(y_{ij} = 1\)</span> if <span class="math inline">\(i\)</span> beat <span class="math inline">\(j\)</span> and <span class="math inline">\(0\)</span> otherwise, the log-likelihood is</p>
+<p><span class="math display">\[\mathcal{L} = \sum_{(i, j) \in \mathcal{D}} \left[ y_{ij} \log \sigma(s_i - s_j) + (1 - y_{ij}) \log \sigma(s_j - s_i) \right].\]</span></p>
+<p>In the above, preferences are assumed to be transitive: if <span class="math inline">\(s_i &gt; s_j\)</span> and <span class="math inline">\(s_j &gt; s_k\)</span>, then <span class="math inline">\(s_i &gt; s_k\)</span>. Often times in personalization we see people’s preferences don’t have a consistent transitive order. Nonetheless, B-T is good enough. Pairs are easier to label than lists, and getting all pairs right would give the right listwise ranking like in bubble sort.</p>
 </section>
-<section id="code" class="level2">
-<h2 class="anchored" data-anchor-id="code">Code</h2>
+<section id="ranknet-lambdarank-lambdamart" class="level2">
+<h2 class="anchored" data-anchor-id="ranknet-lambdarank-lambdamart">§2 RankNet, LambdaRank, LambdaMART</h2>
+<p>Personalization uses Bradley-Terry through ranking models. RankNet puts a neural network scoring function on top of B-T, so pairwise preference data gives pointwise gradients on item scores.</p>
+<p>The ranking metric we optimize is the discounted cumulative gain, <span class="math inline">\(\text{DCG} = \sum_i \text{rel}_i / \log_2(i+1)\)</span>, where <span class="math inline">\(\text{rel}_i\)</span> is the relevance of the item at position <span class="math inline">\(i\)</span>. The denominator penalizes mistakes at the top more than mistakes lower down, since people scroll less. NDCG normalizes DCG so it lies in <span class="math inline">\([0, 1]\)</span>.</p>
+<p>LambdaRank keeps the B-T pairwise loss but weights each pair’s gradient by the change in NDCG that pair-swapping would produce. Swaps near the top of the ranking get larger gradients.</p>
+<p>LambdaMART keeps the same B-T pairwise loss and the NDCG weighting, and uses gradient-boosted trees as the scoring function. XGBoost exposes this as <code>rank:pairwise</code> and <code>rank:ndcg</code>, which makes LambdaMART very accessible.</p>
+</section>
+<section id="dpo" class="level2">
+<h2 class="anchored" data-anchor-id="dpo">§3 DPO</h2>
+<p>Similarly, DPO (2023) applies Bradley-Terry to LLM preference pairs, with prompt <span class="math inline">\(s\)</span>, chosen response <span class="math inline">\(a_w\)</span>, and rejected response <span class="math inline">\(a_l\)</span>, using the notation of <span class="math inline">\(S, A\)</span> from Post 1. Applying the B-T assumption on the rewards gives:</p>
+<p><span class="math display">\[P(a_w \succ a_l \mid s) = \sigma\big(r(s, a_w) - r(s, a_l)\big).\]</span></p>
+<p>Applying a bandit assumption on Post 1’s <span class="math inline">\(Q^\pi(s, a)\)</span> gives the RLHF objective with the reward model <span class="math inline">\(r(s, a)\)</span> in place of <span class="math inline">\(Q\)</span>:</p>
+<p><span class="math display">\[\max_\pi \mathbb{E}_{a \sim \pi}[r(s, a)] - \beta \cdot D_{KL}(\pi \| \pi_{\text{ref}}),\]</span></p>
+<p>where <span class="math inline">\(\pi_{\text{ref}}\)</span> is a reference policy that keeps <span class="math inline">\(\pi\)</span> from wandering too far away. The sum over timesteps from Post 1 has summed out to one term, with no per-token credit assignment, similar to GRPO. A Lagrangian on the KL constraint gives:</p>
+<p><span class="math display">\[\pi^\ast(a \mid s) = \frac{1}{Z(s)} \pi_{\text{ref}}(a \mid s) \exp\left(\frac{1}{\beta} r(s, a)\right),\]</span></p>
+<details>
+<summary>
+Derivation: Lagrangian on the KL constraint
+</summary>
+<p>Expand KL:</p>
+<p><span class="math display">\[J(\pi) = \sum_a \pi(a \mid s) r(s, a) - \beta \sum_a \pi(a \mid s) \log \frac{\pi(a \mid s)}{\pi_{\text{ref}}(a \mid s)}.\]</span></p>
+<p>We add the Lagrangian for <span class="math inline">\(\sum_a \pi(a \mid s) = 1\)</span> and take <span class="math inline">\(\partial / \partial \pi(a \mid s)\)</span>:</p>
+<p><span class="math display">\[r(s, a) - \beta \log \frac{\pi(a \mid s)}{\pi_{\text{ref}}(a \mid s)} - \beta - \lambda = 0.\]</span></p>
+<p>We solve for <span class="math inline">\(\pi\)</span>:</p>
+<p><span class="math display">\[\pi(a \mid s) = \pi_{\text{ref}}(a \mid s) \exp\left(\frac{r(s, a)}{\beta} - 1 - \frac{\lambda}{\beta}\right).\]</span></p>
+<p>Duality showing up again.</p>
+</details>
+<p><span class="math display">\[r(s, a) = \beta \log \frac{\pi^\ast(a \mid s)}{\pi_{\text{ref}}(a \mid s)} + \beta \log Z(s),\]</span></p>
+<p><span class="math display">\[r(s, a_w) - r(s, a_l) = \beta \log \frac{\pi^\ast(a_w \mid s)}{\pi_{\text{ref}}(a_w \mid s)} - \beta \log \frac{\pi^\ast(a_l \mid s)}{\pi_{\text{ref}}(a_l \mid s)},\]</span></p>
+<p><span class="math display">\[\mathcal{L}_{\text{DPO}} = -\mathbb{E}_{(s, a_w, a_l)} \log \sigma\left(\beta \log \frac{\pi(a_w \mid s)}{\pi_{\text{ref}}(a_w \mid s)} - \beta \log \frac{\pi(a_l \mid s)}{\pi_{\text{ref}}(a_l \mid s)}\right).\]</span></p>
+</section>
+<section id="other-parallels" class="level2">
+<h2 class="anchored" data-anchor-id="other-parallels">§4 Other parallels</h2>
+<p><strong>Exploration-exploitation.</strong> In personalization there’s a balance between showing what people like and collecting info on new content or things people haven’t seen. I’ve seen epsilon-greedy, LinUCB, and Thompson sampling as some ways to deal with this tradeoff. It seems like RLHF could have at least two versions of the same tradeoff: which prompt-response pairs to send for annotation, and at generation time with sampling temperature.</p>
+<p><strong>Diversity.</strong> When we recommend a list of items, the marginal value of similar items decreases. Personalization utility is often modelled as submodular in the list, which formalizes the idea of diminishing returns through the inequality <span class="math inline">\(f(X \cup Y) \leq f(X) + f(Y)\)</span>. So shoe content might be very relevant, but the tenth shoe post doesn’t add much for the user. The LLM analogy might be worse than submodular: one paragraph in a given style is good, but the tenth paragraph in the same style could be grating. It seems like a version of this might show up in RLHF, where models start producing homogeneous outputs.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
 <ul>
-<li><p><strong><a href="https://github.com/SuhrudKulkarni/notes/blob/main/code/handrolled_multihead_attention.py">Hand-rolled multi-head self-attention</a>.</strong> Causal MHA with fused QKV, raw <code>nn.Parameter</code> matrices, and einops + einsum.</p></li>
-<li><p><strong><a href="https://github.com/SuhrudKulkarni/notes/blob/main/code/handrolled_rope.py">Two implementations of RoPE</a>.</strong> Even/odd slicing and a block-diagonal rotation matrix.</p></li>
-<li><p><strong><a href="https://github.com/SuhrudKulkarni/notes/blob/main/code/tool_use_objective_gaming.py">Reward hacking: optimizer gaming a misspecified objective</a>.</strong> Toy REINFORCE with two tasks and an <code>add()</code> tool. A bonus allows the optimizer to game the obj and use the tool unnecessarily.</p></li>
+<li><strong>Burges 2010</strong>, “From RankNet to LambdaRank to LambdaMART: An Overview”.</li>
+<li><strong>Rafailov et al.&nbsp;2023</strong>, “Direct Preference Optimization: Your Language Model is Secretly a Reward Model”.</li>
 </ul>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -270,7 +323,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/SuhrudKulkarni\.github\.io\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
