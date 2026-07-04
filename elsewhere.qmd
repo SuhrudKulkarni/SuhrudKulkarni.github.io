@@ -1,0 +1,19 @@
+---
+title: "Elsewhere"
+---
+
+Randy on tumble track
+
+{{< video https://www.youtube.com/embed/CmiMagOX9JE >}}
+
+405 deadlift at 155 bw
+
+{{< video https://www.youtube.com/embed/ib_LIoSQW6E >}}
+
+V7 boulder
+
+{{< video https://www.youtube.com/embed/7AG41ips5Pk >}}
+
+Feeding goat
+
+![](images/feeding_goat.jpg){width=600}

@@ -12,6 +12,8 @@ website:
         text: Home
       - href: writing.qmd
         text: Writing
+      - href: elsewhere.qmd
+        text: Elsewhere
     right:
       - icon: github
         href: https://github.com/SuhrudKulkarni
