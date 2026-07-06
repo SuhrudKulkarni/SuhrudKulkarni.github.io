@@ -3,9 +3,15 @@ project:
   output-dir: _site
   resources:
     - CNAME
+    - favicon.svg
 
 website:
   title: "Suhrud Kulkarni"
+  description: "Suhrud Kulkarni's personal site."
+  site-url: "https://suhrudkulkarni.com"
+  favicon: favicon.svg
+  image: images/headshot.jpg
+  open-graph: true
   navbar:
     left:
       - href: index.qmd

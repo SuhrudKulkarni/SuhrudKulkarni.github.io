@@ -4,10 +4,10 @@ title: "Suhrud Kulkarni"
 
 ![](images/headshot.jpg){width=220 fig-align="left"}
 
-It's pretty fun to find similar ideas across unrelated fields. It's that "wait, I've seen this before" feeling. Many of the pieces here are about it.
+I'm a quant researcher and engineer. Right now I'm on a noncompete, going deep on modern deep learning.
 
-Right now I'm on a noncompete, going deep on modern deep learning. Working notes are on the [Writing](writing.qmd) page.
+One of my favorite things is spotting similar ideas in unrelated fields, that "wait, I've seen this before" feeling. Many of the pieces on the [Writing](writing.qmd) page chase that.
 
-Previously, I spent four years at TD Securities Automated Trading, formerly Headlands Tech Global Markets, working on systematic fixed income trading. Before that, I was an applied scientist at Amazon, working on ML and optimization for personalization, causal inference, and supply chain.
+Previously I spent four years on systematic fixed income trading at TD Securities Automated Trading (formerly Headlands Tech Global Markets), and before that, I worked on ML for supply chain and personalization at Amazon.
 
-Gymnastics has been a lifelong thing. I still love tossing a tkatchev or two. Vegan since 2016.
+Gymnastics has been a lifelong thing. I still toss the occasional tkatchev. Vegan since 2016.
