@@ -4,9 +4,7 @@ title: "Suhrud Kulkarni"
 
 ![](images/headshot.jpg){width=220 fig-align="left"}
 
-I'm a quant researcher and engineer. Right now I'm on a noncompete, going deep on modern deep learning.
-
-One of my favorite things is spotting similar ideas in unrelated fields, that "wait, I've seen this before" feeling. Many of the pieces on the [Writing](writing.qmd) page chase that.
+I'm a quant researcher and engineer. Right now I'm on a noncompete, [going deep on modern deep learning](writing.qmd).
 
 Previously I spent four years on systematic fixed income trading at TD Securities Automated Trading (formerly Headlands Tech Global Markets), and before that, I worked on ML for supply chain and personalization at Amazon.
 

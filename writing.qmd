@@ -2,7 +2,7 @@
 title: "Writing"
 ---
 
-Notes on RL, optimization, numerical methods, and applied techniques.
+One of my favorite things is spotting similar ideas in unrelated fields, that "wait, I've seen this before" feeling. Most of these pieces chase that, across RL, optimization, numerical methods, and applied techniques.
 
 ## Posts
 
