@@ -13,6 +13,7 @@ website:
   image: images/headshot.jpg
   open-graph: true
   navbar:
+    collapse: false
     left:
       - href: index.qmd
         text: Home
