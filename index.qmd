@@ -1,5 +1,4 @@
 ---
-title: "Suhrud Kulkarni"
 ---
 
 ![](images/headshot.jpg){width=220 fig-align="left"}

@@ -15,6 +15,7 @@ website:
   favicon: favicon.svg
   image: images/headshot.jpg
   open-graph: true
+  search: false
   navbar:
     collapse: false
     left:
