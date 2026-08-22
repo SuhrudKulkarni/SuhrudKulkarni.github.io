@@ -19,8 +19,6 @@ website:
   navbar:
     collapse: false
     left:
-      - href: index.qmd
-        text: Home
       - href: writing.qmd
         text: Writing
       - href: elsewhere.qmd
