@@ -1,1 +1,49 @@
 /* css styles */
+
+/* The navbar never collapses (collapse: false), so on narrow screens the nav
+   links squeeze the brand until the site title is ellipsised away entirely.
+   Let the bar wrap and give the title its own row instead. */
+@media (max-width: 767.98px) {
+  .navbar .navbar-container {
+    flex-wrap: wrap;
+    row-gap: 0.25em;
+  }
+
+  .navbar-brand-container {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-right: 0;
+    justify-content: center;
+  }
+
+  .navbar-brand {
+    overflow: visible;
+  }
+}
+
+/* Very narrow phones: tighten link spacing and drop the auto margins so the
+   nav links and social links share one centered row under the title. */
+@media (max-width: 575.98px) {
+  .navbar .navbar-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .navbar .navbar-nav.me-auto,
+  .navbar .navbar-nav.ms-auto {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .navbar .navbar-container {
+    justify-content: center;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  .navbar .navbar-nav .nav-link {
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    font-size: 0.95em;
+  }
+}
