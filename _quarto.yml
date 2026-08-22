@@ -25,7 +25,8 @@ website:
         text: Writing
       - href: elsewhere.qmd
         text: Elsewhere
-    right:
+  page-footer:
+    center:
       - icon: github
         href: https://github.com/SuhrudKulkarni
       - icon: linkedin
