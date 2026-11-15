@@ -2,8 +2,6 @@
 
 The same variance reduction trick shows up under different names. Monte Carlo calls it the *control variate*, trading calls it the *minimum-variance hedge*, quant finance calls it *excess return*, and policy-gradient RL calls it the *baseline-corrected advantage*. We show the trick once, then apply it to RL: baselines, GAE, GRPO.
 
-The post is based on reading and toy problems.
-
 ## §1 A simple formula
 
 I have a random variable $X$ with more variance than I'd like, and a correlated random variable $Y$ with known mean $\mu_Y$. Let:
@@ -214,7 +212,7 @@ In GRPO (Group Relative Policy Optimization) the critic is dropped entirely. A s
 
 $$\hat{A}_i = \frac{R_i - \mathrm{mean}(R_1, \ldots, R_K)}{\mathrm{std}(R_1, \ldots, R_K)}$$
 
-$V_\phi$ encoded the usefulness of states. Without it, every token in a rollout gets the same advantage. From what I've read, this seems to work for short sparse-reward tasks like math with a verifier at the end, and I imagine it gets harder when per-step credit matters along a longer trajectory.
+$V_\phi$ encoded the usefulness of states. Without it, every token in a rollout gets the same advantage. This works for short sparse-reward tasks like math with a verifier at the end. Per-step credit assignment likely gets harder along a longer trajectory.
 
 ## §12 Closing
 

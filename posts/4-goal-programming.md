@@ -52,7 +52,7 @@ When the cost of violation is unobservable in the data used to set the weight, t
 
 Another form of goal programming avoids weight assumptions by solving in strict priority order. We solve for $f_1^\ast = \min f_1$, then $\min f_2$ s.t. $f_1 \leq f_1^\ast$, then $\min f_3$ s.t. $f_1 \leq f_1^\ast, f_2 \leq f_2^\ast$, and so on. Each solved objective becomes a constraint for the next.
 
-This is the same as the weighted version in the limit where each higher-priority weight is infinitely larger than the next. The cost is computational, since now a single optimization is replaced by a sequence. To me, system prompts in LLMs look a lot like a lexicographic ordering, where the model satisfies a hard safety check before optimizing for helpfulness.
+This is the same as the weighted version in the limit where each higher-priority weight is infinitely larger than the next. The cost is computational, since now a single optimization is replaced by a sequence. System prompts in LLMs look a lot like a lexicographic ordering, where the model satisfies a hard safety check before optimizing for helpfulness.
 
 ## §5 Questions in RLHF
 
@@ -60,7 +60,7 @@ RLHF objectives combine several weighted terms, and it seems like the weights on
 
 A length penalty has units of reward per token, which seems measurable from a user-preference study. Sycophancy looks more like the market-maker case, where the cost is to user trust over time and sticky, so a constraint might be safer than a penalty. Lastly, for inflammatory and harmful content, no weight is acceptable and we need to enforce a hard constraint.
 
-I appreciate that we cannot backprop through a hard constraint, so enforcing one means either a code rule, projection, or a soft Lagrangian. The Lagrangian route puts us back at a weighted penalty, with all the mispricing risks from §3 if $\lambda$ is not a price.
+We cannot backprop through a hard constraint, so enforcing one means either a code rule, projection, or a soft Lagrangian. The Lagrangian route puts us back at a weighted penalty, with all the mispricing risks from §3 if $\lambda$ is not a price.
 
 ## References
 
