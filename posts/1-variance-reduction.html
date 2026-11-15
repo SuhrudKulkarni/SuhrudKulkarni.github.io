@@ -155,7 +155,6 @@ window.Quarto = {
 <section id="variance-reduction-and-gae" class="level1">
 <h1>Variance reduction and GAE</h1>
 <p>The same variance reduction trick shows up under different names. Monte Carlo calls it the <em>control variate</em>, trading calls it the <em>minimum-variance hedge</em>, quant finance calls it <em>excess return</em>, and policy-gradient RL calls it the <em>baseline-corrected advantage</em>. We show the trick once, then apply it to RL: baselines, GAE, GRPO.</p>
-<p>The post is based on reading and toy problems.</p>
 <section id="a-simple-formula" class="level2">
 <h2 class="anchored" data-anchor-id="a-simple-formula">§1 A simple formula</h2>
 <p>I have a random variable <span class="math inline">\(X\)</span> with more variance than I’d like, and a correlated random variable <span class="math inline">\(Y\)</span> with known mean <span class="math inline">\(\mu_Y\)</span>. Let:</p>
@@ -303,7 +302,7 @@ Greensmith et al.&nbsp;write this as <span class="math inline">\(\mathbb{E}[g^2 
 <h2 class="anchored" data-anchor-id="dropping-the-critic-grpo">§11 Dropping the critic: GRPO</h2>
 <p>In GRPO (Group Relative Policy Optimization) the critic is dropped entirely. A second LLM-scale value network is expensive to train and serve alongside the policy, and critic variance goes away as a side effect. In place of <span class="math inline">\(V_\phi(S_t)\)</span>, the baseline is a group mean over <span class="math inline">\(K\)</span> rollouts from the same prompt:</p>
 <p><span class="math display">\[\hat{A}_i = \frac{R_i - \mathrm{mean}(R_1, \ldots, R_K)}{\mathrm{std}(R_1, \ldots, R_K)}\]</span></p>
-<p><span class="math inline">\(V_\phi\)</span> encoded the usefulness of states. Without it, every token in a rollout gets the same advantage. From what I’ve read, this seems to work for short sparse-reward tasks like math with a verifier at the end, and I imagine it gets harder when per-step credit matters along a longer trajectory.</p>
+<p><span class="math inline">\(V_\phi\)</span> encoded the usefulness of states. Without it, every token in a rollout gets the same advantage. This works for short sparse-reward tasks like math with a verifier at the end. Per-step credit assignment likely gets harder along a longer trajectory.</p>
 </section>
 <section id="closing" class="level2">
 <h2 class="anchored" data-anchor-id="closing">§12 Closing</h2>

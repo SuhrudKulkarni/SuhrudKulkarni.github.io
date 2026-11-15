@@ -177,13 +177,13 @@ window.Quarto = {
 <section id="lexicographic-goal-programming" class="level2">
 <h2 class="anchored" data-anchor-id="lexicographic-goal-programming">§4 Lexicographic goal programming</h2>
 <p>Another form of goal programming avoids weight assumptions by solving in strict priority order. We solve for <span class="math inline">\(f_1^\ast = \min f_1\)</span>, then <span class="math inline">\(\min f_2\)</span> s.t. <span class="math inline">\(f_1 \leq f_1^\ast\)</span>, then <span class="math inline">\(\min f_3\)</span> s.t. <span class="math inline">\(f_1 \leq f_1^\ast, f_2 \leq f_2^\ast\)</span>, and so on. Each solved objective becomes a constraint for the next.</p>
-<p>This is the same as the weighted version in the limit where each higher-priority weight is infinitely larger than the next. The cost is computational, since now a single optimization is replaced by a sequence. To me, system prompts in LLMs look a lot like a lexicographic ordering, where the model satisfies a hard safety check before optimizing for helpfulness.</p>
+<p>This is the same as the weighted version in the limit where each higher-priority weight is infinitely larger than the next. The cost is computational, since now a single optimization is replaced by a sequence. System prompts in LLMs look a lot like a lexicographic ordering, where the model satisfies a hard safety check before optimizing for helpfulness.</p>
 </section>
 <section id="questions-in-rlhf" class="level2">
 <h2 class="anchored" data-anchor-id="questions-in-rlhf">§5 Questions in RLHF</h2>
 <p>RLHF objectives combine several weighted terms, and it seems like the weights on these are tuned rather than measured.</p>
 <p>A length penalty has units of reward per token, which seems measurable from a user-preference study. Sycophancy looks more like the market-maker case, where the cost is to user trust over time and sticky, so a constraint might be safer than a penalty. Lastly, for inflammatory and harmful content, no weight is acceptable and we need to enforce a hard constraint.</p>
-<p>I appreciate that we cannot backprop through a hard constraint, so enforcing one means either a code rule, projection, or a soft Lagrangian. The Lagrangian route puts us back at a weighted penalty, with all the mispricing risks from §3 if <span class="math inline">\(\lambda\)</span> is not a price.</p>
+<p>We cannot backprop through a hard constraint, so enforcing one means either a code rule, projection, or a soft Lagrangian. The Lagrangian route puts us back at a weighted penalty, with all the mispricing risks from §3 if <span class="math inline">\(\lambda\)</span> is not a price.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
