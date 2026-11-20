@@ -3,8 +3,4 @@
 
 ![](images/headshot.jpg){width=220 fig-align="left"}
 
-I'm a quant researcher and engineer. Right now I'm on a noncompete. See [my notes on modern deep learning](writing.qmd).
-
-Previously I spent four years on systematic fixed income trading at TD Securities Automated Trading (formerly Headlands Tech Global Markets), and before that, I worked on ML for supply chain and personalization at Amazon.
-
-[Gymnastics](elsewhere.qmd) has been a lifelong thing. I still toss the occasional tkatchev. Vegan since 2016.
+Hi! Welcome to my page.
